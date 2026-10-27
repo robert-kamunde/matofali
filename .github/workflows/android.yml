@@ -1,0 +1,86 @@
+name: Test and build Android
+
+# Runs the full test suite, then builds a debug APK and a release App Bundle.
+# GitHub's Ubuntu runners include the Android SDK, so no local Android setup is needed.
+# Release signing uses repository secrets (see docs/RELEASE_CHECKLIST.md); without them
+# the bundle is built unsigned and cannot be uploaded to Google Play.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production web build
+        run: npm run build
+
+      - name: Browser end-to-end tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Copy web build into the Android project
+        run: npx cap sync android
+
+      - name: Prepare release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.MATOFALI_UPLOAD_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.MATOFALI_UPLOAD_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.MATOFALI_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.MATOFALI_UPLOAD_KEY_PASSWORD }}
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/upload-keystore.jks
+          {
+            echo "storeFile=upload-keystore.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/keystore.properties
+
+      - name: Build debug APK and release bundle
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug bundleRelease
+
+      - name: Report sizes
+        run: |
+          ls -l android/app/build/outputs/apk/debug/*.apk android/app/build/outputs/bundle/release/*.aab | tee sizes.txt
+
+      - name: Remove signing files
+        if: always()
+        run: rm -f android/upload-keystore.jks android/keystore.properties
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: matofali-android
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+            sizes.txt
+          retention-days: 30

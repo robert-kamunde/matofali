@@ -20,4 +20,8 @@ export default [
       globals: { ...globals.node, ...globals.browser },
     },
   },
+  {
+    files: ['scripts/**/*.cjs'],
+    languageOptions: { ecmaVersion: 2022, sourceType: 'commonjs', globals: { ...globals.node, ...globals.browser } },
+  },
 ];
