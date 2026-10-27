@@ -10,7 +10,7 @@ Generated 27 October 2026 from the actual runs of `npm run lint`, `npx vitest ru
 | Unit tests | 77 passed, 0 failed |
 | Production build | OK, 208 KB in 15 files (main script 43 KB, 15 KB gzipped) |
 | Browser tests | 40 passed, 0 failed, 6 skipped by design (the layout tests run in the Pixel 5 profile only) |
-| Android Gradle build | **Not run.** The machine cannot reach dl.google.com (HTTP 403), so no APK or AAB exists yet. `.github/workflows/android.yml` will build both once the project is in a GitHub repository. |
+| Android Gradle build | **Passed on GitHub Actions** ([run 40580035069](https://github.com/robert-kamunde/matofali/actions/runs/40580035069), 27 October 2026): debug APK and an **unsigned** release AAB, 6.9 MB zipped artifact. The first run failed on an invalid XML comment in `colors.xml`, fixed in cd7f2bc. Signing secrets are not set yet, so the AAB cannot be uploaded to Play. |
 | Real Android phone | **Not run.** See "Not yet verified" below. |
 
 ## Completion states
@@ -20,7 +20,7 @@ Generated 27 October 2026 from the actual runs of `npm run lint`, `npx vitest ru
 | Implemented | Yes: engine, four levels, UI, Swahili/English, sound, settings, saved data, Capacitor Android project, store materials |
 | Automatically tested | Yes: results below |
 | Device tested | No |
-| Release candidate generated | No (needs the GitHub build and an upload key) |
+| Release candidate generated | No. A debug APK and unsigned AAB are built; a signed AAB needs the upload key secrets |
 | Published | No |
 
 ## Performance (emulated)
