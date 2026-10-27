@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="sw">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0d1420" />
+    <meta name="color-scheme" content="dark" />
+    <title>Matofali</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Splash -->
+      <section class="screen splash" id="screen-splash" aria-label="Matofali">
+        <div class="logo logo-xl" aria-hidden="true">MATO<span>FALI</span></div>
+        <div class="flagbar"></div>
+        <p class="splash-sub" data-i18n="app.tagline" data-i18n-style="stack"></p>
+      </section>
+
+      <!-- Home -->
+      <section class="screen home" id="screen-home" hidden>
+        <div class="home-head">
+          <h1 class="logo logo-xl">MATO<span>FALI</span></h1>
+          <div class="flagbar"></div>
+          <p class="home-tag" data-i18n="app.tagline"></p>
+        </div>
+        <div class="preview-wrap">
+          <canvas id="preview" width="480" height="300" aria-hidden="true"></canvas>
+        </div>
+        <div class="home-stats">
+          <div class="stat"><span class="stat-label" data-i18n="home.best" data-i18n-style="inline"></span><b id="home-best">0</b></div>
+          <div class="stat"><span class="stat-label" data-i18n="home.reached" data-i18n-style="inline"></span><b id="home-reached">1</b></div>
+        </div>
+        <div class="menu">
+          <button class="btn btn-primary" id="btn-play" data-i18n="home.play"></button>
+          <button class="btn" id="btn-settings" data-i18n="home.settings"></button>
+          <button class="btn" id="btn-howto" data-i18n="home.howto"></button>
+        </div>
+      </section>
+
+      <!-- Gameplay -->
+      <section class="screen game" id="screen-game" hidden>
+        <header class="hud">
+          <div class="hud-item"><span data-i18n="hud.score" data-i18n-style="primary"></span><b id="hud-score">0</b></div>
+          <div class="hud-item"><span data-i18n="hud.best" data-i18n-style="primary"></span><b id="hud-best">0</b></div>
+          <div class="hud-item"><span data-i18n="hud.level" data-i18n-style="primary"></span><b id="hud-level">1</b></div>
+          <div class="hud-item"><span data-i18n="hud.lives" data-i18n-style="primary"></span><b id="hud-lives">3</b></div>
+          <button class="icon-btn" id="btn-pause" data-i18n-aria="hud.pause">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>
+          </button>
+        </header>
+        <div class="stage" id="stage">
+          <div class="frame" id="frame">
+            <canvas id="game-canvas"></canvas>
+            <p class="launch-hint" id="launch-hint" data-i18n="hud.launchHint" data-i18n-style="inline" hidden></p>
+            <p class="toast" id="toast" hidden></p>
+
+            <!-- Level card -->
+            <div class="overlay" id="overlay-card" hidden>
+              <div class="panel">
+                <p class="eyebrow" id="card-level"></p>
+                <h2 class="panel-title" id="card-name"></h2>
+                <p class="panel-sub" id="card-subtitle"></p>
+                <button class="btn btn-primary" id="btn-go" data-i18n="card.go"></button>
+              </div>
+            </div>
+
+            <!-- Pause -->
+            <div class="overlay" id="overlay-pause" hidden>
+              <div class="panel">
+                <h2 class="panel-title" data-i18n="pause.title"></h2>
+                <button class="btn btn-primary" id="btn-resume" data-i18n="pause.resume"></button>
+                <button class="btn toggle-btn" id="btn-pause-sound" role="switch" data-i18n-aria="settings.sound"></button>
+                <button class="btn" id="btn-quit" data-i18n="pause.quit"></button>
+              </div>
+            </div>
+
+            <!-- Game over -->
+            <div class="overlay" id="overlay-over" hidden>
+              <div class="panel">
+                <h2 class="panel-title" data-i18n="over.title"></h2>
+                <p class="panel-sub" data-i18n="over.score" data-i18n-style="inline"></p>
+                <p class="big-score" id="over-score">0</p>
+                <p class="badge" id="over-best" data-i18n="over.newBest" data-i18n-style="inline" hidden></p>
+                <button class="btn btn-primary" id="btn-again" data-i18n="over.again"></button>
+                <button class="btn" id="btn-over-home" data-i18n="over.home"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="screen page" id="screen-settings" hidden>
+        <header class="page-head">
+          <button class="icon-btn" data-back data-i18n-aria="common.back">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <h2 class="page-title" data-i18n="settings.title"></h2>
+        </header>
+        <div class="settings">
+          <div class="row">
+            <span class="row-label" data-i18n="settings.sound"></span>
+            <button class="switch" id="set-sound" role="switch" data-i18n-aria="settings.sound" aria-checked="true"><span></span></button>
+          </div>
+          <div class="row">
+            <span class="row-label" data-i18n="settings.vibration"></span>
+            <button class="switch" id="set-vibration" role="switch" data-i18n-aria="settings.vibration" aria-checked="true"><span></span></button>
+          </div>
+          <fieldset class="row row-col">
+            <legend class="row-label" data-i18n="settings.language"></legend>
+            <div class="choices" role="radiogroup">
+              <!-- Language names stay in their own language so anyone can find theirs. -->
+              <button class="choice" role="radio" data-lang="both" lang="sw">Kiswahili + English</button>
+              <button class="choice" role="radio" data-lang="sw" lang="sw">Kiswahili</button>
+              <button class="choice" role="radio" data-lang="en" lang="en">English</button>
+            </div>
+          </fieldset>
+          <button class="row row-link" id="btn-privacy">
+            <span class="row-label" data-i18n="settings.privacy"></span>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
+          </button>
+          <p class="version" id="version"></p>
+        </div>
+      </section>
+
+      <!-- How to play -->
+      <section class="screen page" id="screen-howto" hidden>
+        <header class="page-head">
+          <button class="icon-btn" data-back data-i18n-aria="common.back">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <h2 class="page-title" data-i18n="howto.title"></h2>
+        </header>
+        <ol class="howto">
+          <li>
+            <svg viewBox="0 0 160 96" aria-hidden="true">
+              <rect width="160" height="96" rx="10" fill="#172440"/>
+              <rect x="44" y="70" width="56" height="9" rx="4.5" fill="url(#flagpad)"/>
+              <path d="M28 74h10M116 74h10" stroke="#8C9BB0" stroke-width="2" stroke-linecap="round"/>
+              <path d="M30 70l-5 4 5 4M124 70l5 4-5 4" stroke="#8C9BB0" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <circle cx="84" cy="56" r="9" fill="#FCD116" opacity=".35"/>
+              <path d="M84 30c-4 0-7 3-7 7v18l-5-4c-2-2-5-1-5 2l9 13h17l3-14v-6c0-2-2-4-4-4s-3 1-3 2v-2c0-2-2-4-4-4-1 0-2 0-2 1v-2c0-1-1-3-2-3z" fill="#EEF3F8"/>
+              <defs><linearGradient id="flagpad"><stop offset=".42" stop-color="#1EB53A"/><stop offset=".42" stop-color="#FCD116"/><stop offset=".46" stop-color="#FCD116"/><stop offset=".46" stop-color="#000"/><stop offset=".54" stop-color="#000"/><stop offset=".54" stop-color="#FCD116"/><stop offset=".58" stop-color="#FCD116"/><stop offset=".58" stop-color="#00A3DD"/></linearGradient></defs>
+            </svg>
+            <p data-i18n="howto.drag"></p>
+          </li>
+          <li>
+            <svg viewBox="0 0 160 96" aria-hidden="true">
+              <rect width="160" height="96" rx="10" fill="#172440"/>
+              <rect x="52" y="74" width="56" height="9" rx="4.5" fill="url(#flagpad)"/>
+              <circle cx="80" cy="64" r="7" fill="#fff"/>
+              <path d="M80 50V18" stroke="#FCD116" stroke-width="2" stroke-dasharray="4 4"/>
+              <path d="M74 24l6-8 6 8" stroke="#FCD116" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <circle cx="122" cy="40" r="14" fill="none" stroke="#EEF3F8" stroke-width="2" opacity=".6"/>
+              <circle cx="122" cy="40" r="5" fill="#EEF3F8"/>
+            </svg>
+            <p data-i18n="howto.tap"></p>
+          </li>
+          <li>
+            <svg viewBox="0 0 160 96" aria-hidden="true">
+              <rect width="160" height="96" rx="10" fill="#172440"/>
+              <rect x="52" y="76" width="56" height="9" rx="4.5" fill="url(#flagpad)"/>
+              <circle cx="40" cy="26" r="11" fill="#1EB53A"/><text x="40" y="30.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="sans-serif">↔</text>
+              <circle cx="80" cy="44" r="11" fill="#00A3DD"/><text x="80" y="48.5" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="sans-serif">×3</text>
+              <circle cx="120" cy="22" r="11" fill="#FCD116"/><text x="120" y="26.5" text-anchor="middle" font-size="12" font-weight="700" fill="#000" font-family="sans-serif">♥</text>
+              <path d="M80 58v10" stroke="#8C9BB0" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <p data-i18n="howto.catch"></p>
+            <ul class="legend">
+              <li><i style="background:#1EB53A">↔</i><span data-i18n="howto.wide" data-i18n-style="inline"></span></li>
+              <li><i style="background:#00A3DD">×3</i><span data-i18n="howto.multi" data-i18n-style="inline"></span></li>
+              <li><i style="background:#FCD116;color:#000">♥</i><span data-i18n="howto.life" data-i18n-style="inline"></span></li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Privacy policy -->
+      <section class="screen page" id="screen-privacy" hidden>
+        <header class="page-head">
+          <button class="icon-btn" data-back data-i18n-aria="common.back">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <h2 class="page-title" data-i18n="privacy.title"></h2>
+        </header>
+        <div class="prose" data-i18n="privacy.body"></div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
