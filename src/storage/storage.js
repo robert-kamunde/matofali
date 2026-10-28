@@ -12,18 +12,21 @@ export const KEYS = Object.freeze({
 export const DEFAULT_SETTINGS = Object.freeze({ sound: true, vibration: true, language: DEFAULT_LANGUAGE });
 
 /** Backend over window.localStorage, used in the browser and in tests. */
-export function localStorageBackend(store = globalThis.localStorage) {
+export function localStorageBackend(store) {
+  // Reading window.localStorage itself throws when site data is blocked, so
+  // look it up inside the try blocks below rather than as a default argument.
+  const target = () => store || globalThis.localStorage;
   return {
     async get(key) {
       try {
-        return store.getItem(key);
+        return target().getItem(key);
       } catch {
         return null;
       }
     },
     async set(key, value) {
       try {
-        store.setItem(key, value);
+        target().setItem(key, value);
       } catch {
         /* storage full or blocked: keep playing */
       }

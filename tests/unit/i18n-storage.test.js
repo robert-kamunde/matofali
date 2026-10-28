@@ -124,6 +124,24 @@ describe('saved data', () => {
     expect(s.best).toBe(0);
     await expect(s.recordScore(10)).resolves.toBe(true);
   });
+
+  it('keeps playing when the browser blocks access to localStorage itself', async () => {
+    const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      get() {
+        throw new Error('Access is denied for this document.');
+      },
+    });
+    try {
+      const s = await new SaveData(localStorageBackend()).load();
+      expect(s.best).toBe(0);
+      await expect(s.recordScore(10)).resolves.toBe(true);
+    } finally {
+      if (original) Object.defineProperty(globalThis, 'localStorage', original);
+      else delete globalThis.localStorage;
+    }
+  });
 });
 
 describe('playfield scaling', () => {
