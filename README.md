@@ -67,6 +67,8 @@ keyPassword=...
    ```
 
    `npx cap open android` opens the `android/` folder in Android Studio (or use File → Open → `matofali/android`). Wait for the Gradle sync to finish.
+
+   If Android Studio reports "Incompatible Gradle JVM version", set File → Settings → Build, Execution, Deployment → Build Tools → Gradle → **Gradle JDK** to a Java **21** JDK (Download JDK… → 21, Eclipse Temurin if none is listed). Gradle 8.14 does not run on Java 25.
 3. Pick a phone (USB debugging on) or an emulator in the device menu and press **Run** (or **Debug** for Java breakpoints).
 4. **The game code is JavaScript, so debug it in Chrome:** with the app running, open `chrome://inspect` on your computer and click **inspect** under Matofali. You get the console, breakpoints in `src/` and the network tab. This works in debug builds only; release builds turn it off.
 5. Android-side messages (Back button, plugins, crashes) are in Android Studio's **Logcat**.
