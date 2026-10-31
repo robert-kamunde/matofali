@@ -53,6 +53,27 @@ keyAlias=matofali
 keyPassword=...
 ```
 
+### Run and debug in Android Studio
+
+1. Install Android Studio, Node.js 22 and Git.
+2. In a terminal:
+
+   ```
+   git clone https://github.com/robert-kamunde/matofali
+   cd matofali
+   npm ci
+   npm run cap:sync
+   npx cap open android
+   ```
+
+   `npx cap open android` opens the `android/` folder in Android Studio (or use File → Open → `matofali/android`). Wait for the Gradle sync to finish.
+3. Pick a phone (USB debugging on) or an emulator in the device menu and press **Run** (or **Debug** for Java breakpoints).
+4. **The game code is JavaScript, so debug it in Chrome:** with the app running, open `chrome://inspect` on your computer and click **inspect** under Matofali. You get the console, breakpoints in `src/` and the network tab. This works in debug builds only; release builds turn it off.
+5. Android-side messages (Back button, plugins, crashes) are in Android Studio's **Logcat**.
+6. After changing anything in `src/`, run `npm run cap:sync` again, then press Run.
+
+Live reload on a phone, without rebuilding: `npx cap run android --live-reload --host <your computer's LAN IP> --port 5173` while `npm run dev -- --host` runs. Use it for development only.
+
 Regenerate the icon and splash after changing the artwork: `node scripts/make-brand-assets.mjs && npm run assets:android`.
 
 ## Where things are
