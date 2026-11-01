@@ -2,7 +2,6 @@
 // (docs/SWAHILI_REVIEW.md lists them with their English meaning).
 export default {
   'app.name': 'Matofali',
-  'app.tagline': 'Mchezo wa matofali wa Tanzania',
   'loading': 'Inapakia…',
 
   'home.play': 'Anza',

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { skipLanguagePrompt } from './helpers.js';
 
 const START = '/?e2e&seed=7';
 
@@ -17,6 +18,8 @@ async function startPlaying(page) {
   await page.click('#btn-go');
   await expect(page.locator('#overlay-card')).toBeHidden();
 }
+
+test.beforeEach(async ({ page }) => skipLanguagePrompt(page));
 
 const state = (page) => page.evaluate(() => window.__matofali.game.state);
 
@@ -278,6 +281,7 @@ test('privacy policy is reachable from settings, offline', async ({ page }) => {
 
 test('reduced-motion preference turns off particles and shake', async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 393, height: 851 }, hasTouch: true });
+  await skipLanguagePrompt(ctx);
   const page = await ctx.newPage();
   await page.goto(START);
   await expect(page.locator('#screen-home')).toBeVisible({ timeout: 4000 });

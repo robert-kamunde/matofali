@@ -135,6 +135,8 @@ export class SaveData {
     ]);
     this.best = nonNegativeInt(best, 0);
     this.highestLevel = Math.max(1, nonNegativeInt(highest, 1));
+    // No saved settings at all means the app has never been opened: ask for a language.
+    this.firstLaunch = settings == null;
     this.settings = settings == null ? { ...DEFAULT_SETTINGS } : parseSettings(settings);
     this.stats = stats == null ? { ...DEFAULT_STATS } : parseStats(stats);
     return this;

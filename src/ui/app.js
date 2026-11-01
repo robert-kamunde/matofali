@@ -59,14 +59,14 @@ export class App {
     globalThis.addEventListener('resize', () => this.onResize());
     const wait = Math.max(0, SPLASH_MS - (performance.now() - shownAt));
     await new Promise((r) => setTimeout(r, wait));
-    this.showScreen('home');
+    this.showScreen(this.save.firstLaunch ? 'language' : 'home');
     requestAnimationFrame((t) => this.frame(t));
   }
 
   // ---- Screens -------------------------------------------------------------
 
   showScreen(name) {
-    for (const id of ['splash', 'home', 'game', 'style', 'settings', 'howto', 'privacy']) {
+    for (const id of ['splash', 'language', 'home', 'game', 'style', 'settings', 'howto', 'privacy']) {
       this.$(`screen-${id}`).hidden = id !== name;
     }
     this.screen = name;
@@ -237,6 +237,14 @@ export class App {
     for (const c of this.root.querySelectorAll('.choice')) {
       c.addEventListener('click', () => this.setSetting({ language: c.dataset.lang }));
     }
+    for (const b of this.root.querySelectorAll('[data-first-lang]')) {
+      b.addEventListener('click', async () => {
+        this.sfx.unlock();
+        await this.setSetting({ language: b.dataset.firstLang });
+        this.save.firstLaunch = false;
+        this.showScreen('home');
+      });
+    }
     for (const b of this.root.querySelectorAll('[data-back]')) b.addEventListener('click', () => this.handleBack());
 
     const stage = this.$('stage');
@@ -348,6 +356,7 @@ export class App {
         else if (this.game.state === STATES.PLAYING) this.pause();
         else if (this.game.state === STATES.LEVEL_COMPLETE) return true; // wait for the next card
         return true;
+      case 'language':
       case 'home':
         this.platform?.exitApp?.();
         return false;

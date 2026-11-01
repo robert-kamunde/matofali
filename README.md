@@ -25,7 +25,7 @@ npm 10.9 has a bug that can stop a *fresh* install (no lockfile) with "Cannot re
 | `npm run build` | Production web build into `dist/` |
 | `npm run lint` | ESLint |
 | `npm test` | 86 unit tests (Vitest) |
-| `npm run test:e2e` | 46 browser tests (Playwright, phone profiles). The first time, run `npx playwright install chromium`. |
+| `npm run test:e2e` | 52 browser tests (Playwright, phone profiles). The first time, run `npx playwright install chromium`. |
 | `npm run check` | All of the above in order |
 
 Add `?seed=123` to the URL for a repeatable game.

@@ -4,7 +4,6 @@ All player-facing Swahili is in `src/i18n/sw.js`. Please check each line for nat
 
 | Key | Swahili now | English meaning | Correction |
 | --- | --- | --- | --- |
-| app.tagline | Mchezo wa matofali wa Tanzania | A Tanzanian brick game | |
 | loading | Inapakia… | Loading… | |
 | home.play | Anza | Play / Start | |
 | home.settings | Mipangilio | Settings | |

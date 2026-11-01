@@ -1,6 +1,5 @@
 export default {
   'app.name': 'Matofali',
-  'app.tagline': 'A Tanzanian brick game',
   'loading': 'Loading…',
 
   'home.play': 'Play',

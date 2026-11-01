@@ -7,7 +7,7 @@
 | `npm run lint` | ESLint over source, tests and scripts |
 | `npm test` | 86 Vitest unit tests in Node (engine, rules, levels, translations, storage, layout) |
 | `npm run build` | Production web build into `dist/` |
-| `npm run test:e2e` | 46 Playwright tests of the built app, in a Pixel 5 profile and a 360 × 640 budget-phone profile, both with touch |
+| `npm run test:e2e` | 52 Playwright tests of the built app, in a Pixel 5 profile and a 360 × 640 budget-phone profile, both with touch |
 | `npm run check` | All four in order |
 
 The GitHub workflow runs the same commands, then builds the Android APK and AAB.
@@ -18,7 +18,7 @@ Paddle movement and limits; launch angles and the shallow-angle guard; wall boun
 
 ### What the browser tests cover
 
-Splash then home; no requests to the internet; level card text; tap to launch; drag to move (paddle follows x only); pause and resume freeze and continue the simulation; quit to home; automatic pause when the app goes to the background and staying paused on return; the Back button on every screen; language switching on every screen and after restart; sound and vibration settings remembered; level clear toast and next level card; game over with new best and restart; a lower score is not a best; corrupt saved data; how-to-play illustrations; Style screen (locked items can't be chosen, choices remembered, unlock note at level 5); privacy policy offline; reduced-motion preference; layout on 320 × 568, 360 × 640, 360 × 800, 412 × 915 and 800 × 1280 screens; resizing mid-game.
+Splash then home; first-launch language question (each choice, remembered after restart); no requests to the internet; level card text; tap to launch; drag to move (paddle follows x only); pause and resume freeze and continue the simulation; quit to home; automatic pause when the app goes to the background and staying paused on return; the Back button on every screen; language switching on every screen and after restart; sound and vibration settings remembered; level clear toast and next level card; game over with new best and restart; a lower score is not a best; corrupt saved data; how-to-play illustrations; Style screen (locked items can't be chosen, choices remembered, unlock note at level 5); privacy policy offline; reduced-motion preference; layout on 320 × 568, 360 × 640, 360 × 800, 412 × 915 and 800 × 1280 screens; resizing mid-game.
 
 ## On a real Android phone (manual, not yet done)
 

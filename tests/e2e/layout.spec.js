@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { skipLanguagePrompt } from './helpers.js';
+
+test.beforeEach(async ({ page }) => skipLanguagePrompt(page));
 
 // Checks the field scaling on a range of phone sizes (runs in one project only).
 const SIZES = [
@@ -13,6 +16,7 @@ for (const s of SIZES) {
   test(`playfield keeps its 3:4 shape and fits on ${s.name}`, async ({ browser }, info) => {
     test.skip(info.project.name !== 'pixel-5', 'size sweep runs in one project');
     const ctx = await browser.newContext({ viewport: { width: s.width, height: s.height }, hasTouch: true, isMobile: true });
+    await skipLanguagePrompt(ctx);
     const page = await ctx.newPage();
     await page.goto('/?e2e');
     await expect(page.locator('#screen-home')).toBeVisible({ timeout: 4000 });

@@ -64,7 +64,6 @@ body {
 
 /* Splash */
 .splash { align-items: center; justify-content: center; gap: 14px; text-align: center; }
-.splash-sub { color: var(--muted); margin: 0; display: flex; flex-direction: column; gap: 2px; }
 
 /* Bilingual text: Swahili on top, English smaller beneath */
 .t-pri { display: block; }
@@ -110,7 +109,6 @@ body {
 /* Home */
 .home { align-items: center; justify-content: space-between; gap: 12px; text-align: center; }
 .home-head { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.home-tag { color: var(--muted); margin: 0; font-size: 0.95rem; }
 .preview-wrap { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; width: 100%; }
 #preview { width: min(100%, 360px); height: auto; max-height: 100%; aspect-ratio: 480 / 300; border-radius: 12px; border: 2px solid var(--line); }
 .home-stats { display: flex; gap: 24px; justify-content: center; font-variant-numeric: tabular-nums; }
@@ -118,6 +116,9 @@ body {
 .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 .stat b { font-family: var(--display); font-weight: 400; font-size: 1.5rem; }
 .menu { display: flex; flex-direction: column; gap: 10px; width: min(100%, 340px); }
+.first-lang { align-items: center; justify-content: center; gap: 22px; text-align: center; }
+.first-lang-title { margin: 0; display: flex; flex-direction: column; gap: 4px; font-family: var(--display); font-weight: 400; font-size: 1.5rem; }
+.first-lang-title .t-sec { font-family: var(--body); font-size: 0.95rem; color: var(--muted); }
 .menu-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .menu-row .btn { min-width: 0; }
 
