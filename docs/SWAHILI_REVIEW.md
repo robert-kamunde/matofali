@@ -58,5 +58,18 @@ All player-facing Swahili is in `src/i18n/sw.js`. Please check each line for nat
 | level.pattern.checker | Dama | Checkers (the board game) | |
 | level.pattern.scatter | Nyota | Stars | |
 | level.generated.subtitle | Changamoto mpya | A new challenge | |
+| home.style / style.title | Mapambo | Style (literally "decorations") | |
+| style.paddles | Ubao | Paddles | |
+| style.balls | Mpira | Balls | |
+| style.inUse | Unatumia | In use | |
+| style.locked.level | Fika ngazi {n} | Reach level {n} | |
+| style.locked.score | Pata alama {n} | Score {n} | |
+| style.locked.bricks | Vunja matofali {n} | Break {n} bricks | |
+| style.locked.flawless | Maliza ngazi {n} bila kupoteza maisha | Clear {n} levels without losing a life | |
+| style.locked.games | Cheza michezo {n} | Play {n} games | |
+| style.unlocked | Umefungua: {name} | Unlocked: {name} | |
+| paddle.* | Kawaida, Bahari, Bendera, Kanga, Mninga, Dhahabu | Classic, Ocean, Flag, Kanga, Mahogany, Gold | |
+| ball.* | Kawaida, Jua, Barafu, Moto, Usiku, Dhahabu | Classic, Sun, Ice, Ember, Night, Gold | |
+| privacy.body | (updated paragraph, see `sw.js`) | Now also lists unlock counts and chosen paddle and ball | |
 | Store short description | Vunja matofali! Mchezo wa Kitanzania wenye Kilimanjaro, Zanzibar na zaidi. | Break the bricks! A Tanzanian game with Kilimanjaro, Zanzibar and more. | |
 | Store full description | see `store/listing-sw.md` | | |

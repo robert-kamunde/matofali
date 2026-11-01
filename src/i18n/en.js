@@ -6,6 +6,29 @@ export default {
   'home.play': 'Play',
   'home.settings': 'Settings',
   'home.howto': 'How to play',
+  'home.style': 'Style',
+  'style.title': 'Style',
+  'style.paddles': 'Paddles',
+  'style.balls': 'Balls',
+  'style.inUse': 'In use',
+  'style.locked.level': 'Reach level {n}',
+  'style.locked.score': 'Score {n}',
+  'style.locked.bricks': 'Break {n} bricks',
+  'style.locked.flawless': 'Clear {n} levels without losing a life',
+  'style.locked.games': 'Play {n} games',
+  'style.unlocked': 'Unlocked: {name}',
+  'paddle.classic': 'Classic',
+  'paddle.ocean': 'Ocean',
+  'paddle.bendera': 'Flag',
+  'paddle.kanga': 'Kanga',
+  'paddle.mninga': 'Mahogany',
+  'paddle.dhahabu': 'Gold',
+  'ball.classic': 'Classic',
+  'ball.jua': 'Sun',
+  'ball.barafu': 'Ice',
+  'ball.moto': 'Ember',
+  'ball.usiku': 'Night',
+  'ball.dhahabu': 'Gold',
   'home.best': 'Best',
   'home.reached': 'Highest level',
 
@@ -49,7 +72,7 @@ export default {
 
   'privacy.title': 'Privacy policy',
   'privacy.body':
-    'Matofali does not collect, upload or share any personal information. The game stores only your best score, the highest level you reached, and your sound, vibration and language settings, and it keeps them on your phone. There are no ads, accounts or tracking. Uninstalling the app deletes this information.',
+    'Matofali does not collect, upload or share any personal information. The game stores only your best score, the highest level you reached, simple game counts used for unlocks (games played, bricks broken, levels cleared without losing a life), your chosen paddle and ball, and your sound, vibration and language settings, and it keeps them on your phone. There are no ads, accounts or tracking. Uninstalling the app deletes this information.',
 
   'common.back': 'Back',
 

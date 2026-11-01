@@ -8,6 +8,29 @@ export default {
   'home.play': 'Anza',
   'home.settings': 'Mipangilio',
   'home.howto': 'Jinsi ya kucheza',
+  'home.style': 'Mapambo',
+  'style.title': 'Mapambo',
+  'style.paddles': 'Ubao',
+  'style.balls': 'Mpira',
+  'style.inUse': 'Unatumia',
+  'style.locked.level': 'Fika ngazi {n}',
+  'style.locked.score': 'Pata alama {n}',
+  'style.locked.bricks': 'Vunja matofali {n}',
+  'style.locked.flawless': 'Maliza ngazi {n} bila kupoteza maisha',
+  'style.locked.games': 'Cheza michezo {n}',
+  'style.unlocked': 'Umefungua: {name}',
+  'paddle.classic': 'Kawaida',
+  'paddle.ocean': 'Bahari',
+  'paddle.bendera': 'Bendera',
+  'paddle.kanga': 'Kanga',
+  'paddle.mninga': 'Mninga',
+  'paddle.dhahabu': 'Dhahabu',
+  'ball.classic': 'Kawaida',
+  'ball.jua': 'Jua',
+  'ball.barafu': 'Barafu',
+  'ball.moto': 'Moto',
+  'ball.usiku': 'Usiku',
+  'ball.dhahabu': 'Dhahabu',
   'home.best': 'Bora',
   'home.reached': 'Ngazi ya juu',
 
@@ -51,7 +74,7 @@ export default {
 
   'privacy.title': 'Sera ya faragha',
   'privacy.body':
-    'Matofali haikusanyi, haihifadhi kwenye seva, wala haitumi taarifa zako binafsi. Mchezo unahifadhi kwenye simu yako tu alama yako bora, ngazi ya juu uliyofikia, na mipangilio ya sauti, mtetemo na lugha. Hakuna matangazo, akaunti wala ufuatiliaji. Ukifuta programu, taarifa hizi zinafutwa pia.',
+    'Matofali haikusanyi, haihifadhi kwenye seva, wala haitumi taarifa zako binafsi. Mchezo unahifadhi kwenye simu yako tu alama yako bora, ngazi ya juu uliyofikia, hesabu rahisi za mchezo zinazotumika kufungua mapambo (michezo uliyocheza, matofali uliyovunja, ngazi ulizomaliza bila kupoteza maisha), ubao na mpira uliochagua, na mipangilio ya sauti, mtetemo na lugha. Hakuna matangazo, akaunti wala ufuatiliaji. Ukifuta programu, taarifa hizi zinafutwa pia.',
 
   'common.back': 'Rudi',
 

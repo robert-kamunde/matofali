@@ -3,7 +3,8 @@ import sw from '../../src/i18n/sw.js';
 import en from '../../src/i18n/en.js';
 import { translate, translatePlain, lookup, LANGUAGE_MODES } from '../../src/i18n/i18n.js';
 import { LEVELS, PATTERN_IDS } from '../../src/config/levels.js';
-import { SaveData, memoryBackend, localStorageBackend, parseSettings, KEYS, DEFAULT_SETTINGS } from '../../src/storage/storage.js';
+import { SaveData, memoryBackend, localStorageBackend, parseSettings, parseStats, KEYS, DEFAULT_SETTINGS } from '../../src/storage/storage.js';
+import { PADDLES, BALLS, unlockProgress, unlockedKeys } from '../../src/config/skins.js';
 import { fitField } from '../../src/ui/layout.js';
 import { readFileSync } from 'node:fs';
 
@@ -21,6 +22,8 @@ describe('translations', () => {
       ...LEVELS.flatMap((l) => [l.nameKey, l.subtitleKey]),
       ...PATTERN_IDS.map((id) => `level.pattern.${id}`),
       'level.generated.subtitle',
+      ...[...PADDLES, ...BALLS].map((i) => i.nameKey),
+      ...[...PADDLES, ...BALLS].filter((i) => i.unlock).map((i) => `style.locked.${i.unlock.kind}`),
     ]);
     for (const k of keys) expect(sw[k], k).toBeTypeOf('string');
   });
@@ -61,7 +64,8 @@ describe('saved data', () => {
     const s = await new SaveData(memoryBackend()).load();
     expect(s.best).toBe(0);
     expect(s.highestLevel).toBe(1);
-    expect(s.settings).toEqual({ sound: true, vibration: true, language: 'both' });
+    expect(s.settings).toEqual({ sound: true, vibration: true, language: 'both', paddle: 'classic', ball: 'classic' });
+    expect(s.stats).toEqual({ games: 0, bricks: 0, flawless: 0 });
   });
 
   it('keeps the best score across restarts and only raises it', async () => {
@@ -87,7 +91,7 @@ describe('saved data', () => {
     const a = await new SaveData(backend).load();
     await a.updateSettings({ sound: false });
     await a.updateSettings({ vibration: false, language: 'en' });
-    expect((await new SaveData(backend).load()).settings).toEqual({ sound: false, vibration: false, language: 'en' });
+    expect((await new SaveData(backend).load()).settings).toEqual({ sound: false, vibration: false, language: 'en', paddle: 'classic', ball: 'classic' });
   });
 
   it('recovers from corrupt or tampered data', async () => {
@@ -103,7 +107,8 @@ describe('saved data', () => {
   });
 
   it('keeps valid fields when others are bad', () => {
-    expect(parseSettings('{"sound":false,"vibration":7,"language":"sw"}')).toEqual({ sound: false, vibration: true, language: 'sw' });
+    expect(parseSettings('{"sound":false,"vibration":7,"language":"sw"}')).toEqual({ sound: false, vibration: true, language: 'sw', paddle: 'classic', ball: 'classic' });
+    expect(parseSettings('{"paddle":"ocean","ball":"no-such-ball"}')).toMatchObject({ paddle: 'ocean', ball: 'classic' });
     expect(parseSettings('null')).toEqual(DEFAULT_SETTINGS);
   });
 
@@ -158,5 +163,40 @@ describe('playfield scaling', () => {
 
   it('never returns negative sizes', () => {
     expect(fitField(-10, 50, 480, 640)).toMatchObject({ width: 0, height: 0 });
+  });
+});
+
+describe('unlockable paddles and balls', () => {
+  it('starts with only the classic paddle and ball', () => {
+    expect([...unlockedKeys({ level: 1, score: 0, games: 0, bricks: 0, flawless: 0 })]).toEqual(['paddle:classic', 'ball:classic']);
+  });
+
+  it('unlocks each item exactly at its target, from any kind of progress', () => {
+    for (const item of [...PADDLES, ...BALLS].filter((i) => i.unlock)) {
+      const { kind, n } = item.unlock;
+      expect(unlockProgress(item.unlock, { [kind]: n - 1 }).done, item.id).toBe(false);
+      expect(unlockProgress(item.unlock, { [kind]: n }).done, item.id).toBe(true);
+      expect(unlockProgress(item.unlock, { [kind]: n * 5 }).have).toBe(n);
+    }
+  });
+
+  it('has unique ids and an unlock kind the game tracks', () => {
+    const kinds = new Set(['level', 'score', 'bricks', 'flawless', 'games']);
+    for (const list of [PADDLES, BALLS]) {
+      expect(new Set(list.map((i) => i.id)).size).toBe(list.length);
+      for (const i of list.filter((x) => x.unlock)) expect(kinds.has(i.unlock.kind), i.id).toBe(true);
+    }
+  });
+
+  it('keeps lifetime stats across restarts and ignores bad values', async () => {
+    const backend = memoryBackend();
+    const a = await new SaveData(backend).load();
+    await a.addStats({ games: 1, bricks: 40 });
+    await a.addStats({ bricks: 2, flawless: 1, bogus: 9 });
+    const b = await new SaveData(backend).load();
+    expect(b.stats).toEqual({ games: 1, bricks: 42, flawless: 1 });
+    expect(b.progress).toMatchObject({ level: 1, score: 0, bricks: 42 });
+    expect(parseStats('{"games":-3,"bricks":"x","flawless":2}')).toEqual({ games: 0, bricks: 0, flawless: 2 });
+    expect(parseStats('not json')).toEqual({ games: 0, bricks: 0, flawless: 0 });
   });
 });

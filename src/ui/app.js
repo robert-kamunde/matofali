@@ -4,16 +4,18 @@ import { Game, STATES } from '../engine/game.js';
 import { createRng } from '../engine/rng.js';
 import { RULES } from '../config/rules.js';
 import { LEVELS, validateLevel } from '../config/levels.js';
-import { Renderer, drawLevelPreview } from '../render/renderer.js';
+import { Renderer, drawLevelPreview, drawPaddleShape, drawBall } from '../render/renderer.js';
+import { PADDLES, BALLS, paddleById, ballById, isUnlocked, unlockProgress, unlockedKeys } from '../config/skins.js';
 import { Sfx } from '../audio/sfx.js';
 import { SaveData } from '../storage/storage.js';
-import { applyTranslations, translate, translatePlain } from '../i18n/i18n.js';
+import { applyTranslations, translate, translatePlain, lookup } from '../i18n/i18n.js';
 import { fitField } from './layout.js';
 
 const STEP_MS = 1000 / RULES.stepsPerSecond;
 const MAX_STEPS_PER_FRAME = 5;
 export const SPLASH_MS = 1000;
 const LEVEL_CLEAR_PAUSE_MS = 1100;
+const UNLOCK_NOTE_MS = 2600;
 
 const EVENT_SOUNDS = {
   wall: 'wall',
@@ -39,6 +41,9 @@ export class App {
     this.lastFrame = 0;
     this.acc = 0;
     this.timers = new Set();
+    this.pendingBricks = 0; // bricks broken since the stats were last saved
+    this.lostLifeThisLevel = false;
+    this.knownUnlocks = new Set();
     for (const l of LEVELS) validateLevel(l, RULES);
     this.game = new Game({ rules: RULES, levels: LEVELS, rng: createRng(seed ?? Date.now()), onEvent: (e) => this.onGameEvent(e) });
     this.renderer = new Renderer(this.$('game-canvas'), RULES, { reducedMotion });
@@ -47,6 +52,7 @@ export class App {
   async start() {
     const shownAt = performance.now();
     await this.save.load();
+    this.knownUnlocks = unlockedKeys(this.save.progress);
     this.applySettings();
     this.bindUi();
     this.onResize();
@@ -60,11 +66,12 @@ export class App {
   // ---- Screens -------------------------------------------------------------
 
   showScreen(name) {
-    for (const id of ['splash', 'home', 'game', 'settings', 'howto', 'privacy']) {
+    for (const id of ['splash', 'home', 'game', 'style', 'settings', 'howto', 'privacy']) {
       this.$(`screen-${id}`).hidden = id !== name;
     }
     this.screen = name;
     if (name === 'home') this.refreshHome();
+    if (name === 'style') this.renderStyle();
     if (name === 'game') this.onResize();
     const focusTarget = this.$(`screen-${name}`).querySelector('.btn-primary, [data-back]');
     focusTarget?.focus({ preventScroll: true });
@@ -94,6 +101,13 @@ export class App {
   applySettings() {
     const s = this.save.settings;
     this.sfx.enabled = s.sound;
+    const progress = this.save.progress;
+    const paddle = paddleById(s.paddle);
+    const ball = ballById(s.ball);
+    this.renderer.skin = {
+      paddle: isUnlocked(paddle, progress) ? paddle : PADDLES[0],
+      ball: isUnlocked(ball, progress) ? ball : BALLS[0],
+    };
     applyTranslations(this.root, s.language, (key) => (key === 'settings.version' ? { v: this.version } : {}));
     this.$('set-sound').setAttribute('aria-checked', String(s.sound));
     this.$('set-vibration').setAttribute('aria-checked', String(s.vibration));
@@ -103,6 +117,95 @@ export class App {
     setStacked(soundBtn, translate(s.language, s.sound ? 'pause.soundOn' : 'pause.soundOff'));
     soundBtn.setAttribute('aria-checked', String(s.sound));
     if (this.overlay === 'card') this.fillLevelCard();
+    if (this.screen === 'style') this.renderStyle();
+  }
+
+  // ---- Style: unlockable paddles and balls ---------------------------------
+
+  renderStyle() {
+    const mode = this.lang;
+    const progress = this.save.progress;
+    const fill = (kind, items, selected, draw) => {
+      const box = this.$(`skins-${kind}`);
+      box.textContent = '';
+      for (const item of items) {
+        const p = unlockProgress(item.unlock, progress);
+        const btn = document.createElement('button');
+        btn.className = 'skin';
+        btn.type = 'button';
+        btn.setAttribute('role', 'radio');
+        btn.dataset.kind = kind;
+        btn.dataset.id = item.id;
+        btn.setAttribute('aria-checked', String(item.id === selected));
+        btn.setAttribute('aria-disabled', String(!p.done));
+        const canvas = document.createElement('canvas');
+        canvas.width = 192;
+        canvas.height = 96;
+        canvas.setAttribute('aria-hidden', 'true');
+        draw(canvas.getContext('2d'), item);
+        const name = document.createElement('span');
+        name.className = 'skin-name';
+        name.textContent = translatePlain(mode, item.nameKey);
+        btn.append(canvas, name);
+        const label = [name.textContent];
+        if (p.done && item.id === selected) {
+          const note = document.createElement('span');
+          note.className = 'skin-need';
+          note.textContent = translatePlain(mode, 'style.inUse');
+          btn.append(note);
+        } else if (!p.done) {
+          const need = translatePlain(mode, `style.locked.${item.unlock.kind}`, { n: p.need.toLocaleString() });
+          const note = document.createElement('span');
+          note.className = 'skin-need';
+          note.textContent = need;
+          const bar = document.createElement('span');
+          bar.className = 'skin-bar';
+          const fillEl = document.createElement('span');
+          fillEl.style.width = `${Math.round((100 * p.have) / p.need)}%`;
+          bar.append(fillEl);
+          btn.append(note, bar);
+          label.push(need, `${p.have}/${p.need}`);
+        }
+        btn.setAttribute('aria-label', label.join('. '));
+        btn.addEventListener('click', () => {
+          if (!p.done) return;
+          this.sfx.unlock();
+          this.setSetting({ [kind]: item.id });
+        });
+        box.append(btn);
+      }
+    };
+    fill('paddle', PADDLES, this.renderer.skin.paddle.id, (ctx, item) => {
+      drawPaddleShape(ctx, 16, 38, 160, 22, item.stops);
+    });
+    fill('ball', BALLS, this.renderer.skin.ball.id, (ctx, item) => {
+      drawBall(ctx, { x: 96, y: 48, r: 26 }, item);
+    });
+  }
+
+  /** Saves the bricks broken so far and anything else in `extra`, then announces new unlocks. */
+  async saveStats(extra = {}) {
+    const delta = { bricks: this.pendingBricks, ...extra };
+    this.pendingBricks = 0;
+    if (Object.values(delta).some((v) => v > 0)) await this.save.addStats(delta);
+    this.checkUnlocks();
+  }
+
+  checkUnlocks() {
+    const now = unlockedKeys(this.save.progress);
+    const fresh = [...now].filter((k) => !this.knownUnlocks.has(k));
+    this.knownUnlocks = now;
+    if (!fresh.length) return;
+    const items = fresh.map((k) => {
+      const [kind, id] = k.split(':');
+      return kind === 'paddle' ? paddleById(id) : ballById(id);
+    });
+    // Each language gets the item names in that language.
+    const say = (lang) => lookup(lang, 'style.unlocked', { name: items.map((i) => lookup(lang, i.nameKey)).join(', ') });
+    const note = this.$('unlock-note');
+    note.textContent = this.lang === 'both' ? `${say('sw')} · ${say('en')}` : say(this.lang);
+    note.hidden = false;
+    this.later(() => (note.hidden = true), UNLOCK_NOTE_MS);
   }
 
   async setSetting(patch) {
@@ -118,6 +221,7 @@ export class App {
       fn(e);
     });
     on('btn-play', () => this.newGame());
+    on('btn-style', () => this.showScreen('style'));
     on('btn-settings', () => this.showScreen('settings'));
     on('btn-howto', () => this.showScreen('howto'));
     on('btn-privacy', () => this.showScreen('privacy'));
@@ -184,6 +288,9 @@ export class App {
     this.updateHud();
     this.fillLevelCard();
     this.showOverlay('card');
+    this.lostLifeThisLevel = false;
+    this.pendingBricks = 0;
+    this.saveStats({ games: 1 });
   }
 
   fillLevelCard() {
@@ -217,6 +324,7 @@ export class App {
 
   quitToHome() {
     this.clearTimers();
+    this.saveStats();
     this.save.recordScore(this.game.score);
     this.game.quit();
     this.showOverlay(null);
@@ -226,6 +334,7 @@ export class App {
   /** Android Back button. Returns true if it was handled inside the app. */
   handleBack() {
     switch (this.screen) {
+      case 'style':
       case 'settings':
       case 'howto':
         this.showScreen('home');
@@ -249,6 +358,7 @@ export class App {
 
   onBackground() {
     this.pause();
+    this.saveStats();
     this.save.recordScore(this.game.score);
     this.sfx.suspend();
   }
@@ -263,21 +373,29 @@ export class App {
     if (sound) this.sfx.play(sound);
     this.renderer.addEffect(e);
     switch (e.type) {
+      case 'brickBreak':
+        this.pendingBricks++;
+        break;
       case 'lifeLost':
+        this.lostLifeThisLevel = true;
         if (this.save.settings.vibration) this.platform?.vibrate?.(120);
         break;
-      case 'levelComplete':
+      case 'levelComplete': {
         this.save.recordScore(this.game.score);
+        const flawless = this.lostLifeThisLevel ? 0 : 1;
+        this.lostLifeThisLevel = false;
         this.toast(translatePlain(this.lang, 'card.cleared', { bonus: e.bonus }));
         this.later(() => {
           this.game.advance();
           this.save.recordLevel(this.game.level);
+          this.saveStats({ flawless });
           this.renderer.clearEffects();
           this.fillLevelCard();
           this.showOverlay('card');
           this.updateHud();
         }, LEVEL_CLEAR_PAUSE_MS);
         break;
+      }
       case 'gameOver':
         this.finishGame();
         break;
@@ -289,6 +407,7 @@ export class App {
 
   async finishGame() {
     const isBest = await this.save.recordScore(this.game.score);
+    await this.saveStats();
     this.$('over-score').textContent = this.game.score;
     this.$('over-best').hidden = !isBest;
     this.updateHud();
@@ -314,6 +433,7 @@ export class App {
     for (const id of this.timers) clearTimeout(id);
     this.timers.clear();
     this.$('toast').hidden = true;
+    this.$('unlock-note').hidden = true;
   }
 
   updateHud() {

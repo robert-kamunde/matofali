@@ -2,14 +2,25 @@
 // load, so corrupt or missing data falls back to defaults instead of crashing.
 
 import { LANGUAGE_MODES, DEFAULT_LANGUAGE } from '../i18n/i18n.js';
+import { PADDLES, BALLS, DEFAULT_PADDLE, DEFAULT_BALL } from '../config/skins.js';
 
 export const KEYS = Object.freeze({
   best: 'matofali.best',
   highestLevel: 'matofali.highestLevel',
   settings: 'matofali.settings',
+  stats: 'matofali.stats',
 });
 
-export const DEFAULT_SETTINGS = Object.freeze({ sound: true, vibration: true, language: DEFAULT_LANGUAGE });
+export const DEFAULT_SETTINGS = Object.freeze({
+  sound: true,
+  vibration: true,
+  language: DEFAULT_LANGUAGE,
+  paddle: DEFAULT_PADDLE,
+  ball: DEFAULT_BALL,
+});
+
+/** Lifetime counts used for unlocks (src/config/skins.js). */
+export const DEFAULT_STATS = Object.freeze({ games: 0, bricks: 0, flawless: 0 });
 
 /** Backend over window.localStorage, used in the browser and in tests. */
 export function localStorageBackend(store) {
@@ -85,7 +96,20 @@ export function parseSettings(raw) {
     sound: typeof obj.sound === 'boolean' ? obj.sound : DEFAULT_SETTINGS.sound,
     vibration: typeof obj.vibration === 'boolean' ? obj.vibration : DEFAULT_SETTINGS.vibration,
     language: LANGUAGE_MODES.includes(obj.language) ? obj.language : DEFAULT_SETTINGS.language,
+    paddle: PADDLES.some((p) => p.id === obj.paddle) ? obj.paddle : DEFAULT_SETTINGS.paddle,
+    ball: BALLS.some((b) => b.id === obj.ball) ? obj.ball : DEFAULT_SETTINGS.ball,
   };
+}
+
+export function parseStats(raw) {
+  let obj;
+  try {
+    obj = JSON.parse(raw);
+  } catch {
+    return { ...DEFAULT_STATS };
+  }
+  if (!obj || typeof obj !== 'object') return { ...DEFAULT_STATS };
+  return Object.fromEntries(Object.keys(DEFAULT_STATS).map((k) => [k, nonNegativeInt(obj[k], 0)]));
 }
 
 export class SaveData {
@@ -94,17 +118,25 @@ export class SaveData {
     this.best = 0;
     this.highestLevel = 1;
     this.settings = { ...DEFAULT_SETTINGS };
+    this.stats = { ...DEFAULT_STATS };
+  }
+
+  /** Everything the unlock rules look at. */
+  get progress() {
+    return { level: this.highestLevel, score: this.best, ...this.stats };
   }
 
   async load() {
-    const [best, highest, settings] = await Promise.all([
+    const [best, highest, settings, stats] = await Promise.all([
       this.backend.get(KEYS.best),
       this.backend.get(KEYS.highestLevel),
       this.backend.get(KEYS.settings),
+      this.backend.get(KEYS.stats),
     ]);
     this.best = nonNegativeInt(best, 0);
     this.highestLevel = Math.max(1, nonNegativeInt(highest, 1));
     this.settings = settings == null ? { ...DEFAULT_SETTINGS } : parseSettings(settings);
+    this.stats = stats == null ? { ...DEFAULT_STATS } : parseStats(stats);
     return this;
   }
 
@@ -126,5 +158,14 @@ export class SaveData {
     this.settings = parseSettings(JSON.stringify({ ...this.settings, ...patch }));
     await this.backend.set(KEYS.settings, JSON.stringify(this.settings));
     return this.settings;
+  }
+
+  /** Adds to the lifetime counts, e.g. addStats({ bricks: 12 }). */
+  async addStats(delta) {
+    for (const [k, v] of Object.entries(delta)) {
+      if (k in this.stats && v > 0) this.stats[k] += v;
+    }
+    await this.backend.set(KEYS.stats, JSON.stringify(this.stats));
+    return this.stats;
   }
 }

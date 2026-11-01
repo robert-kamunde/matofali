@@ -284,3 +284,62 @@ test('reduced-motion preference turns off particles and shake', async ({ browser
   expect(await page.evaluate(() => window.__matofali.renderer.reducedMotion)).toBe(true);
   await ctx.close();
 });
+
+test('style screen: six paddles and six balls, only classic unlocked at first', async ({ page }) => {
+  const errors = await openHome(page);
+  await page.click('#btn-style');
+  await expect(page.locator('#screen-style')).toBeVisible();
+  await expect(page.locator('#skins-paddle .skin')).toHaveCount(6);
+  await expect(page.locator('#skins-ball .skin')).toHaveCount(6);
+  await expect(page.locator('#skins-paddle .skin[aria-disabled="false"]')).toHaveCount(1);
+  await expect(page.locator('#skins-paddle .skin[data-id="classic"]')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.locator('#skins-paddle .skin[data-id="ocean"]')).toContainText('Fika ngazi 5');
+  // A locked paddle can't be chosen.
+  await expect(page.locator('#skins-paddle .skin[data-id="ocean"]')).toHaveAttribute('aria-disabled', 'true');
+  await page.locator('#skins-paddle .skin[data-id="ocean"]').dispatchEvent('click');
+  await expect(page.locator('#skins-paddle .skin[data-id="classic"]')).toHaveAttribute('aria-checked', 'true');
+  await page.locator('#screen-style [data-back]').click();
+  await expect(page.locator('#screen-home')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('an unlocked paddle and ball can be chosen and are remembered', async ({ page }) => {
+  await page.goto(START);
+  await page.evaluate(() => {
+    localStorage.setItem('matofali.highestLevel', '12');
+    localStorage.setItem('matofali.stats', JSON.stringify({ games: 3, bricks: 300, flawless: 0 }));
+  });
+  await page.reload();
+  await expect(page.locator('#screen-home')).toBeVisible({ timeout: 5000 });
+  await page.click('#btn-style');
+  await page.click('#skins-paddle .skin[data-id="bendera"]');
+  await page.click('#skins-ball .skin[data-id="jua"]');
+  await expect(page.locator('#skins-paddle .skin[data-id="bendera"]')).toHaveAttribute('aria-checked', 'true');
+  await page.reload();
+  await expect(page.locator('#screen-home')).toBeVisible({ timeout: 5000 });
+  const skin = await page.evaluate(() => {
+    const s = window.__matofali.renderer.skin;
+    return [s.paddle.id, s.ball.id];
+  });
+  expect(skin).toEqual(['bendera', 'jua']);
+});
+
+test('reaching level 5 announces the Ocean paddle', async ({ page }) => {
+  await openHome(page);
+  await startPlaying(page);
+  await page.evaluate(() => {
+    const g = window.__matofali.game;
+    g.level = 4;
+    g.bricks = g.bricks.slice(0, 1);
+    const br = g.bricks[0];
+    br.hp = 1;
+    g.balls = [{ x: br.x + 18, y: br.y + br.h + 9, r: 7, vx: 0, vy: -5, stuck: false }];
+  });
+  await expect(page.locator('#overlay-card')).toBeVisible({ timeout: 4000 });
+  await expect(page.locator('#unlock-note')).toBeVisible();
+  await expect(page.locator('#unlock-note')).toContainText('Umefungua: Bahari');
+  await expect(page.locator('#unlock-note')).toContainText('Unlocked: Ocean');
+  const stats = await page.evaluate(() => window.__matofali.save.stats);
+  expect(stats).toMatchObject({ games: 1, flawless: 1 });
+  expect(stats.bricks).toBeGreaterThanOrEqual(1);
+});

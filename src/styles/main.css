@@ -118,6 +118,36 @@ body {
 .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 .stat b { font-family: var(--display); font-weight: 400; font-size: 1.5rem; }
 .menu { display: flex; flex-direction: column; gap: 10px; width: min(100%, 340px); }
+.menu-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.menu-row .btn { min-width: 0; }
+
+/* Style screen */
+.style-page { display: flex; flex-direction: column; gap: 10px; max-width: 480px; width: 100%; margin: 0 auto; }
+.style-group { margin: 8px 0 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.skins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.skin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: var(--panel);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  min-width: 0;
+}
+.skin canvas { width: 100%; max-width: 96px; height: auto; aspect-ratio: 2 / 1; }
+.skin-name { font-weight: 600; font-size: 0.9rem; }
+.skin-need { font-size: 0.72rem; color: var(--muted); line-height: 1.25; }
+.skin-bar { width: 80%; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.skin-bar span { display: block; height: 100%; background: var(--yellow); }
+.skin[aria-checked='true'] { border-color: var(--yellow); }
+.skin[aria-disabled='true'] { cursor: default; }
+.skin[aria-disabled='true'] canvas { opacity: 0.35; filter: grayscale(0.7); }
+.skin:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 
 /* Gameplay */
 .game { padding-top: calc(8px + var(--safe-t)); padding-bottom: calc(8px + var(--safe-b)); gap: 8px; }
@@ -153,6 +183,25 @@ body {
   font-weight: 600;
 }
 .launch-hint { bottom: 22%; color: rgba(238, 243, 248, 0.82); font-size: 0.9rem; padding: 0 12px; }
+.unlock-note {
+  position: absolute;
+  z-index: 5;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 24px);
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
 .toast { top: 42%; font-family: var(--display); color: var(--yellow); font-size: 1.3rem; text-shadow: 0 2px 0 #000; }
 
 .overlay {

@@ -3,6 +3,7 @@
 
 import { COLORS, BRICK_COLORS, POWER_UP_STYLE } from './palette.js';
 import { createRng } from '../engine/rng.js';
+import { PADDLES, BALLS } from '../config/skins.js';
 
 const MAX_PARTICLES = 120;
 
@@ -14,6 +15,7 @@ export class Renderer {
     this.W = rules.field.width;
     this.H = rules.field.height;
     this.reducedMotion = reducedMotion;
+    this.skin = { paddle: PADDLES[0], ball: BALLS[0] };
     this.particles = [];
     this.shake = 0;
     this.scale = 1;
@@ -96,7 +98,7 @@ export class Renderer {
     for (const br of game.bricks) drawBrick(ctx, br);
     this.drawDrops(game.drops);
     this.drawPaddle(game.paddle);
-    for (const b of game.balls) drawBall(ctx, b);
+    for (const b of game.balls) drawBall(ctx, b, this.skin.ball);
     for (const p of this.particles) {
       ctx.globalAlpha = p.life / 30;
       ctx.fillStyle = p.color;
@@ -123,31 +125,35 @@ export class Renderer {
   }
 
   drawPaddle(p) {
-    drawPaddleShape(this.ctx, p.x - p.w / 2, this.rules.paddle.y, p.w, this.rules.paddle.height);
+    drawPaddleShape(this.ctx, p.x - p.w / 2, this.rules.paddle.y, p.w, this.rules.paddle.height, this.skin.paddle.stops);
   }
 }
 
-export function drawPaddleShape(ctx, x, y, w, h) {
+export function drawPaddleShape(ctx, x, y, w, h, stops = PADDLES[0].stops) {
   const g = ctx.createLinearGradient(x, 0, x + w, 0);
-  const stops = [
-    [0, COLORS.green], [0.42, COLORS.green], [0.42, COLORS.yellow], [0.46, COLORS.yellow],
-    [0.46, '#000'], [0.54, '#000'], [0.54, COLORS.yellow], [0.58, COLORS.yellow],
-    [0.58, COLORS.blue], [1, COLORS.blue],
-  ];
   for (const [o, c] of stops) g.addColorStop(o, c);
   roundRect(ctx, x, y, w, h, h / 2);
   ctx.fillStyle = g;
   ctx.fill();
+  // Soft top shine so every paddle reads as glossy, like the logo art.
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  roundRect(ctx, x + h / 2, y + 2, w - h, h / 3, h / 6);
+  ctx.fill();
 }
 
-function drawBall(ctx, b) {
-  ctx.fillStyle = '#fff';
+export function drawBall(ctx, b, style = BALLS[0]) {
+  ctx.fillStyle = style.fill;
   ctx.beginPath();
   ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = COLORS.yellow;
+  if (style.ring) {
+    ctx.strokeStyle = style.ring;
+    ctx.lineWidth = Math.max(1, b.r * 0.22);
+    ctx.stroke();
+  }
+  ctx.fillStyle = style.highlight;
   ctx.beginPath();
-  ctx.arc(b.x - 2, b.y - 2, 2.5, 0, Math.PI * 2);
+  ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.36, 0, Math.PI * 2);
   ctx.fill();
 }
 
