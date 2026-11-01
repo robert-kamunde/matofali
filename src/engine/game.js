@@ -66,11 +66,14 @@ export class Game {
 
   // ---- Lifecycle ----------------------------------------------------------
 
-  /** Starts a new game at level 1 and shows the first level card. */
-  newGame() {
-    this.score = 0;
-    this.lives = this.rules.lives.start;
-    this.level = 1;
+  /**
+   * Starts a game and shows the first level card: level 1 by default, or a
+   * saved run's level with the score and lives it had when that level began.
+   */
+  newGame({ level = 1, score = 0, lives = this.rules.lives.start } = {}) {
+    this.score = score;
+    this.lives = Math.min(Math.max(1, lives), this.rules.lives.max);
+    this.level = Math.max(1, level);
     this.paddle.w = this.rules.paddle.width;
     this.paddle.wideSteps = 0;
     this.paddle.x = this.paddle.target = this.rules.field.width / 2;
@@ -198,15 +201,17 @@ export class Game {
   moveBalls() {
     const { width: W } = this.rules.field;
     const padY = this.rules.paddle.y;
+    const moving = [];
     for (const b of this.balls) {
       if (b.stuck) {
         b.x = this.paddle.x;
         b.y = padY - b.r - 1;
-        continue;
-      }
-      const speed = Math.hypot(b.vx, b.vy);
-      const n = this.substepsFor(speed);
-      for (let s = 0; s < n; s++) {
+      } else moving.push(b);
+    }
+    // All balls advance in the same substeps so they can meet each other.
+    const n = Math.max(0, ...moving.map((b) => this.substepsFor(Math.hypot(b.vx, b.vy))));
+    for (let s = 0; s < n; s++) {
+      for (const b of moving) {
         b.x += b.vx / n;
         b.y += b.vy / n;
         if (b.x < b.r) {
@@ -226,6 +231,50 @@ export class Game {
         this.collidePaddle(b);
         this.collideBricks(b);
         if (this.state !== STATES.PLAYING) return;
+      }
+      if (moving.length > 1) this.collideBallPairs(moving);
+    }
+  }
+
+  /**
+   * Balls bounce off each other like equal billiard balls (DECISIONS D-27):
+   * they swap the part of their velocity along the line between centres, then
+   * each keeps its own speed and the shallow-angle limit still applies.
+   */
+  collideBallPairs(balls) {
+    const maxDeg = this.rules.ball.maxAngleFromVerticalDeg;
+    for (let i = 0; i < balls.length; i++) {
+      for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i];
+        const b = balls[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        const touch = a.r + b.r;
+        if (dist >= touch || dist < 1e-6) continue;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const closing = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+        if (closing <= 0) continue; // already moving apart, e.g. just split
+        const speedA = Math.hypot(a.vx, a.vy);
+        const speedB = Math.hypot(b.vx, b.vy);
+        a.vx -= closing * nx;
+        a.vy -= closing * ny;
+        b.vx += closing * nx;
+        b.vy += closing * ny;
+        for (const [ball, speed] of [[a, speedA], [b, speedB]]) {
+          const now = Math.hypot(ball.vx, ball.vy) || 1;
+          const lim = limitAngle((ball.vx / now) * speed, (ball.vy / now) * speed, speed, maxDeg);
+          ball.vx = lim.vx;
+          ball.vy = lim.vy;
+        }
+        // Push them apart so they don't stay stuck together.
+        const push = (touch - dist) / 2;
+        a.x -= nx * push;
+        a.y -= ny * push;
+        b.x += nx * push;
+        b.y += ny * push;
+        this.emit('ballHit');
       }
     }
   }

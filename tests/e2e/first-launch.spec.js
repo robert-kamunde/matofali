@@ -18,7 +18,7 @@ test('first launch asks for a language, then remembers it', async ({ page }) => 
 });
 
 test('each first-launch choice sets that language', async ({ page }) => {
-  for (const [lang, play] of [['sw', 'Anza'], ['both', 'AnzaPlay']]) {
+  for (const [lang, play] of [['sw', 'Anza'], ['en', 'Play']]) {
     await page.goto('/?e2e');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
@@ -28,9 +28,10 @@ test('each first-launch choice sets that language', async ({ page }) => {
   }
 });
 
-test('no tagline under the logo', async ({ page }) => {
+test('two language choices and no tagline under the logo', async ({ page }) => {
   await page.goto('/?e2e');
   await expect(page.locator('#screen-language')).toBeVisible({ timeout: 4000 });
-  await page.click('[data-first-lang="both"]');
+  await expect(page.locator('[data-first-lang]')).toHaveCount(2);
+  await page.click('[data-first-lang="sw"]');
   await expect(page.locator('#screen-home')).not.toContainText('Tanzania');
 });

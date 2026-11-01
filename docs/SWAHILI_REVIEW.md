@@ -70,5 +70,7 @@ All player-facing Swahili is in `src/i18n/sw.js`. Please check each line for nat
 | paddle.* | Kawaida, Bahari, Bendera, Kanga, Mninga, Dhahabu | Classic, Ocean, Flag, Kanga, Mahogany, Gold | |
 | ball.* | Kawaida, Jua, Barafu, Moto, Usiku, Dhahabu | Classic, Sun, Ice, Ember, Night, Gold | |
 | privacy.body | (updated paragraph, see `sw.js`) | Now also lists unlock counts and chosen paddle and ball | |
+| home.continue | Endelea ngazi {n} | Continue level {n} | |
+| home.newGame | Mchezo mpya | New game | |
 | Store short description | Vunja matofali! Mchezo wa Kitanzania wenye Kilimanjaro, Zanzibar na zaidi. | Break the bricks! A Tanzanian game with Kilimanjaro, Zanzibar and more. | |
 | Store full description | see `store/listing-sw.md` | | |

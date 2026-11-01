@@ -21,7 +21,7 @@ src/
     layout.js         fits the 480 × 640 field into any screen
   i18n/
     sw.js, en.js      all player-facing text
-    i18n.js           bilingual / Swahili / English modes
+    i18n.js           Swahili / English
   audio/sfx.js        synthesised sound effects
   storage/storage.js  validated save data over Capacitor Preferences or localStorage
   platform/platform.js  Android vs browser: storage backend, haptics, Back, pause/resume

@@ -19,6 +19,7 @@ const UNLOCK_NOTE_MS = 2600;
 
 const EVENT_SOUNDS = {
   wall: 'wall',
+  ballHit: 'wall',
   paddle: 'paddle',
   brickCrack: 'crack',
   brickBreak: 'break',
@@ -87,6 +88,14 @@ export class App {
   refreshHome() {
     this.$('home-best').textContent = this.save.best;
     this.$('home-reached').textContent = this.save.highestLevel;
+    // A saved run puts Continue first; Play becomes New game.
+    const run = this.save.run;
+    const cont = this.$('btn-continue');
+    const play = this.$('btn-play');
+    cont.hidden = !run;
+    if (run) setStacked(cont, translate(this.lang, 'home.continue', { n: run.level }));
+    setStacked(play, translate(this.lang, run ? 'home.newGame' : 'home.play'));
+    play.classList.toggle('btn-primary', !run);
     const preview = new Game({ rules: RULES, levels: LEVELS, rng: createRng(1) });
     preview.loadLevel();
     drawLevelPreview(this.$('preview'), preview.bricks, RULES);
@@ -183,6 +192,12 @@ export class App {
     });
   }
 
+  /** Save point: the level about to start, with the score and lives going into it. */
+  saveRun() {
+    const g = this.game;
+    this.save.saveRun({ level: g.level, score: g.score, lives: g.lives });
+  }
+
   /** Saves the bricks broken so far and anything else in `extra`, then announces new unlocks. */
   async saveStats(extra = {}) {
     const delta = { bricks: this.pendingBricks, ...extra };
@@ -200,10 +215,9 @@ export class App {
       const [kind, id] = k.split(':');
       return kind === 'paddle' ? paddleById(id) : ballById(id);
     });
-    // Each language gets the item names in that language.
     const say = (lang) => lookup(lang, 'style.unlocked', { name: items.map((i) => lookup(lang, i.nameKey)).join(', ') });
     const note = this.$('unlock-note');
-    note.textContent = this.lang === 'both' ? `${say('sw')} · ${say('en')}` : say(this.lang);
+    note.textContent = say(this.lang);
     note.hidden = false;
     this.later(() => (note.hidden = true), UNLOCK_NOTE_MS);
   }
@@ -221,6 +235,7 @@ export class App {
       fn(e);
     });
     on('btn-play', () => this.newGame());
+    on('btn-continue', () => this.newGame(this.save.run));
     on('btn-style', () => this.showScreen('style'));
     on('btn-settings', () => this.showScreen('settings'));
     on('btn-howto', () => this.showScreen('howto'));
@@ -287,18 +302,20 @@ export class App {
 
   // ---- Game flow -----------------------------------------------------------
 
-  newGame() {
+  /** Starts a new game, or continues a saved run (level, score and lives at that level's start). */
+  newGame(run = null) {
     this.clearTimers();
     this.renderer.clearEffects();
     this.newBest = false;
-    this.game.newGame();
+    this.game.newGame(run || {});
     this.showScreen('game');
     this.updateHud();
     this.fillLevelCard();
     this.showOverlay('card');
     this.lostLifeThisLevel = false;
     this.pendingBricks = 0;
-    this.saveStats({ games: 1 });
+    this.saveRun();
+    if (!run) this.saveStats({ games: 1 });
   }
 
   fillLevelCard() {
@@ -397,6 +414,7 @@ export class App {
         this.later(() => {
           this.game.advance();
           this.save.recordLevel(this.game.level);
+          this.saveRun();
           this.saveStats({ flawless });
           this.renderer.clearEffects();
           this.fillLevelCard();
@@ -416,6 +434,7 @@ export class App {
 
   async finishGame() {
     const isBest = await this.save.recordScore(this.game.score);
+    this.save.clearRun();
     await this.saveStats();
     this.$('over-score').textContent = this.game.score;
     this.$('over-best').hidden = !isBest;

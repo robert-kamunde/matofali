@@ -9,6 +9,7 @@ export const KEYS = Object.freeze({
   highestLevel: 'matofali.highestLevel',
   settings: 'matofali.settings',
   stats: 'matofali.stats',
+  run: 'matofali.run',
 });
 
 export const DEFAULT_SETTINGS = Object.freeze({
@@ -101,6 +102,22 @@ export function parseSettings(raw) {
   };
 }
 
+/** A saved game in progress: where to continue from. null if none or invalid. */
+export function parseRun(raw) {
+  let obj;
+  try {
+    obj = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+  if (!obj || typeof obj !== 'object') return null;
+  const level = nonNegativeInt(obj.level, 0);
+  const lives = nonNegativeInt(obj.lives, 0);
+  const score = nonNegativeInt(obj.score, -1);
+  if (level < 1 || lives < 1 || score < 0) return null;
+  return { level, score, lives };
+}
+
 export function parseStats(raw) {
   let obj;
   try {
@@ -119,6 +136,7 @@ export class SaveData {
     this.highestLevel = 1;
     this.settings = { ...DEFAULT_SETTINGS };
     this.stats = { ...DEFAULT_STATS };
+    this.run = null;
   }
 
   /** Everything the unlock rules look at. */
@@ -127,11 +145,12 @@ export class SaveData {
   }
 
   async load() {
-    const [best, highest, settings, stats] = await Promise.all([
+    const [best, highest, settings, stats, run] = await Promise.all([
       this.backend.get(KEYS.best),
       this.backend.get(KEYS.highestLevel),
       this.backend.get(KEYS.settings),
       this.backend.get(KEYS.stats),
+      this.backend.get(KEYS.run),
     ]);
     this.best = nonNegativeInt(best, 0);
     this.highestLevel = Math.max(1, nonNegativeInt(highest, 1));
@@ -139,6 +158,7 @@ export class SaveData {
     this.firstLaunch = settings == null;
     this.settings = settings == null ? { ...DEFAULT_SETTINGS } : parseSettings(settings);
     this.stats = stats == null ? { ...DEFAULT_STATS } : parseStats(stats);
+    this.run = run == null ? null : parseRun(run);
     return this;
   }
 
@@ -160,6 +180,17 @@ export class SaveData {
     this.settings = parseSettings(JSON.stringify({ ...this.settings, ...patch }));
     await this.backend.set(KEYS.settings, JSON.stringify(this.settings));
     return this.settings;
+  }
+
+  /** Remembers the start of the current level so the player can continue later. */
+  async saveRun({ level, score, lives }) {
+    this.run = { level, score, lives };
+    await this.backend.set(KEYS.run, JSON.stringify(this.run));
+  }
+
+  async clearRun() {
+    this.run = null;
+    await this.backend.set(KEYS.run, '');
   }
 
   /** Adds to the lifetime counts, e.g. addStats({ bricks: 12 }). */

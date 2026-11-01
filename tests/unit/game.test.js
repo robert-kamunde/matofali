@@ -515,3 +515,74 @@ describe('long-run stability', () => {
     expect(levels).toBeGreaterThan(0);
   }, 60000);
 });
+
+describe('balls bounce off each other', () => {
+  const ball = (game, x, y, vx, vy) => ({ x, y, r: game.rules.ball.radius, vx, vy, stuck: false });
+
+  it('two balls meeting head-on bounce back instead of passing through', () => {
+    const { game, events } = playingGame({ rows: ONE_CORNER_BRICK });
+    const s = ballSpeed(1);
+    game.balls = [ball(game, 200, 300, s * 0.3, -s * 0.954), ball(game, 230, 300, -s * 0.3, -s * 0.954)];
+    for (let i = 0; i < 20; i++) game.step();
+    const [a, b] = game.balls;
+    expect(a.x).toBeLessThan(b.x); // never swapped sides
+    expect(a.vx).toBeLessThan(0);
+    expect(b.vx).toBeGreaterThan(0);
+    expect(types(events)).toContain('ballHit');
+  });
+
+  it('each ball keeps its speed and the shallow-angle limit', () => {
+    const { game } = playingGame({ rows: ONE_CORNER_BRICK });
+    const s = ballSpeed(1);
+    const vy = Math.sqrt(s * s - (s * 0.9) ** 2);
+    game.balls = [ball(game, 150, 300, s * 0.9, vy), ball(game, 330, 300, -s * 0.9, vy)];
+    for (let i = 0; i < 30; i++) game.step();
+    const maxDeg = RULES.ball.maxAngleFromVerticalDeg;
+    for (const b of game.balls) {
+      expect(Math.hypot(b.vx, b.vy)).toBeCloseTo(s, 6);
+      expect((Math.atan2(Math.abs(b.vx), Math.abs(b.vy)) * 180) / Math.PI).toBeLessThanOrEqual(maxDeg + 1e-6);
+    }
+  });
+
+  it('fast balls at the speed cap still cannot pass through each other', () => {
+    const { game } = playingGame({ rows: ONE_CORNER_BRICK, level: 60 });
+    const s = ballSpeed(60);
+    for (let offset = 0; offset < 14; offset += 0.5) {
+      game.balls = [ball(game, 100 + offset, 300, s * 0.9, -s * 0.436), ball(game, 380, 300, -s * 0.9, -s * 0.436)];
+      for (let i = 0; i < 25 && game.balls.length === 2; i++) {
+        game.step();
+        if (game.balls[0].x > game.balls[1].x) throw new Error(`passed through at offset ${offset}`);
+      }
+    }
+  });
+
+  it('balls that have just split apart do not bounce off each other', () => {
+    const { game, events } = playingGame({ rows: ONE_CORNER_BRICK });
+    setBall(game, 240, 300, 0, -ballSpeed(1));
+    game.splitBalls();
+    const before = game.balls.map((b) => [b.vx, b.vy]);
+    game.step();
+    expect(types(events)).not.toContain('ballHit');
+    game.balls.forEach((b, i) => {
+      expect(b.vx).toBeCloseTo(before[i][0], 6);
+      expect(b.vy).toBeCloseTo(before[i][1], 6);
+    });
+  });
+});
+
+describe('continuing a saved game', () => {
+  it('starts at the saved level with its score and lives', () => {
+    const g = new Game({ rng: createRng(2) });
+    g.newGame({ level: 6, score: 3100, lives: 2 });
+    expect(g.state).toBe(STATES.READY);
+    expect([g.level, g.score, g.lives, g.round]).toEqual([6, 3100, 2, 2]);
+    expect(g.levelDef.id).toBe('generated-6');
+    expect(g.bricks.length).toBeGreaterThan(0);
+  });
+
+  it('keeps lives within the allowed range', () => {
+    const g = new Game({ rng: createRng(2) });
+    g.newGame({ level: 2, score: 0, lives: 99 });
+    expect(g.lives).toBe(RULES.lives.max);
+  });
+});

@@ -21,7 +21,6 @@
         <div class="menu" role="group" aria-label="Chagua lugha · Choose your language">
           <button class="btn" data-first-lang="sw" lang="sw">Kiswahili</button>
           <button class="btn" data-first-lang="en" lang="en">English</button>
-          <button class="btn" data-first-lang="both" lang="sw">Kiswahili + English</button>
         </div>
       </section>
 
@@ -38,7 +37,8 @@
           <div class="stat"><span class="stat-label" data-i18n="home.reached" data-i18n-style="inline"></span><b id="home-reached">1</b></div>
         </div>
         <div class="menu">
-          <button class="btn btn-primary" id="btn-play" data-i18n="home.play"></button>
+          <button class="btn btn-primary" id="btn-continue" hidden></button>
+          <button class="btn btn-primary" id="btn-play"></button>
           <div class="menu-row">
             <button class="btn" id="btn-style" data-i18n="home.style"></button>
             <button class="btn" id="btn-settings" data-i18n="home.settings"></button>
@@ -137,7 +137,6 @@
             <legend class="row-label" data-i18n="settings.language"></legend>
             <div class="choices" role="radiogroup">
               <!-- Language names stay in their own language so anyone can find theirs. -->
-              <button class="choice" role="radio" data-lang="both" lang="sw">Kiswahili + English</button>
               <button class="choice" role="radio" data-lang="sw" lang="sw">Kiswahili</button>
               <button class="choice" role="radio" data-lang="en" lang="en">English</button>
             </div>

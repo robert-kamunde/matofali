@@ -5,6 +5,8 @@ export default {
   'home.play': 'Play',
   'home.settings': 'Settings',
   'home.howto': 'How to play',
+  'home.continue': 'Continue level {n}',
+  'home.newGame': 'New game',
   'home.style': 'Style',
   'style.title': 'Style',
   'style.paddles': 'Paddles',
@@ -71,7 +73,7 @@ export default {
 
   'privacy.title': 'Privacy policy',
   'privacy.body':
-    'Matofali does not collect, upload or share any personal information. The game stores only your best score, the highest level you reached, simple game counts used for unlocks (games played, bricks broken, levels cleared without losing a life), your chosen paddle and ball, and your sound, vibration and language settings, and it keeps them on your phone. There are no ads, accounts or tracking. Uninstalling the app deletes this information.',
+    'Matofali does not collect, upload or share any personal information. The game stores only your best score, the highest level you reached, the level you can continue from, simple game counts used for unlocks (games played, bricks broken, levels cleared without losing a life), your chosen paddle and ball, and your sound, vibration and language settings, and it keeps them on your phone. There are no ads, accounts or tracking. Uninstalling the app deletes this information.',
 
   'common.back': 'Back',
 

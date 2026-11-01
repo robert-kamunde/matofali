@@ -1,11 +1,13 @@
-// Three language modes: 'both' (Swahili first, English beneath), 'sw', 'en'.
+// Two languages, Swahili and English (DECISIONS D-28 removed the bilingual mode).
+// translate() still accepts 'both' and stacks the two, which only the
+// first-launch language screen's fixed labels resemble.
 
 import sw from './sw.js';
 import en from './en.js';
 
 export const DICTS = { sw, en };
-export const LANGUAGE_MODES = ['both', 'sw', 'en'];
-export const DEFAULT_LANGUAGE = 'both';
+export const LANGUAGE_MODES = ['sw', 'en'];
+export const DEFAULT_LANGUAGE = 'sw';
 
 function fill(str, vars) {
   return str.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));

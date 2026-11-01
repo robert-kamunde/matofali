@@ -5,6 +5,8 @@ const {chromium}=require('playwright');const path=require('path');
 const ROOT=process.cwd();const OUT=path.join(ROOT,'store')+'/';
 (async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:360,height:640},deviceScaleFactor:3,isMobile:true,hasTouch:true});
+// Skip the first-launch language question: screenshots are in Kiswahili.
+await ctx.addInitScript(()=>{if(localStorage.getItem('matofali.settings')===null)localStorage.setItem('matofali.settings',JSON.stringify({sound:true,vibration:true,language:'sw'}));});
 const p=await ctx.newPage();
 await p.goto('http://localhost:4173/?e2e&seed=11');await p.waitForSelector('#screen-home:not([hidden])');await p.waitForTimeout(300);
 await p.screenshot({path:OUT+'screenshots/01-home.png'});

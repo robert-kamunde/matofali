@@ -29,7 +29,7 @@ test('splash shows first, then the home screen', async ({ page }) => {
   await expect(page.locator('#screen-home')).toBeVisible({ timeout: 4000 });
   await expect(page.locator('#screen-splash')).toBeHidden();
   await expect(page.locator('#btn-play')).toContainText('Anza');
-  await expect(page.locator('#btn-play')).toContainText('Play');
+  await expect(page.locator('#btn-play')).not.toContainText('Play'); // Swahili only
   await expect(page.locator('#btn-settings')).toContainText('Mipangilio');
   await expect(page.locator('#btn-howto')).toContainText('Jinsi ya kucheza');
   await expect(page.locator('#home-best')).toHaveText('0');
@@ -51,9 +51,9 @@ test('loads no files from the internet', async ({ page }) => {
 test('level card, tap to launch, live score', async ({ page }) => {
   await openHome(page);
   await page.click('#btn-play');
-  await expect(page.locator('#card-level')).toHaveText('Ngazi 1 · Level 1');
+  await expect(page.locator('#card-level')).toHaveText('Ngazi 1');
   await expect(page.locator('#card-name')).toContainText('Bendera');
-  await expect(page.locator('#card-subtitle')).toContainText('The flag');
+  await expect(page.locator('#card-subtitle')).toContainText('Bendera ya Taifa');
   await page.click('#btn-go');
   await expect(page.locator('#launch-hint')).toBeVisible();
   expect(await state(page)).toBe('playing');
@@ -161,11 +161,12 @@ test('language switching updates every screen and is remembered', async ({ page 
   await page.click('#btn-pause');
   await expect(page.locator('#overlay-pause .panel-title')).toHaveText('Paused');
   await page.reload();
-  await expect(page.locator('#btn-play')).toHaveText('Play', { timeout: 4000 });
+  // The game in progress was saved, so Play is now New game.
+  await expect(page.locator('#btn-play')).toHaveText('New game', { timeout: 4000 });
   await page.click('#btn-settings');
   await page.click('.choice[data-lang="sw"]');
   await page.click('[data-back]:visible');
-  await expect(page.locator('#btn-play')).toHaveText('Anza');
+  await expect(page.locator('#btn-play')).toHaveText('Mchezo mpya');
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('sw');
 });
 
@@ -202,7 +203,7 @@ test('clearing a level shows the bonus and the next level card', async ({ page }
   await expect(page.locator('#toast')).toBeVisible();
   await expect(page.locator('#toast')).toContainText('+250');
   await expect(page.locator('#overlay-card')).toBeVisible({ timeout: 4000 });
-  await expect(page.locator('#card-level')).toHaveText('Ngazi 2 · Level 2');
+  await expect(page.locator('#card-level')).toHaveText('Ngazi 2');
   await expect(page.locator('#card-name')).toContainText('Kilimanjaro');
   await expect(page.locator('#card-subtitle')).toContainText('Paa la Afrika');
   expect(await page.evaluate(() => window.__matofali.save.highestLevel)).toBe(2);
@@ -222,7 +223,7 @@ test('game over shows the score and new best, and the best is kept', async ({ pa
   await expect(page.locator('#over-score')).toHaveText('1234');
   await expect(page.locator('#over-best')).toBeVisible();
   await page.click('#btn-again');
-  await expect(page.locator('#card-level')).toHaveText('Ngazi 1 · Level 1');
+  await expect(page.locator('#card-level')).toHaveText('Ngazi 1');
   expect(await page.evaluate(() => window.__matofali.game.score)).toBe(0);
   expect(await page.evaluate(() => window.__matofali.game.lives)).toBe(3);
   await expect(page.locator('#hud-best')).toHaveText('1234');
@@ -276,6 +277,9 @@ test('privacy policy is reachable from settings, offline', async ({ page }) => {
   await page.click('#btn-settings');
   await page.click('#btn-privacy');
   await expect(page.locator('#screen-privacy .prose')).toContainText('haikusanyi');
+  await page.click('#screen-privacy [data-back]');
+  await page.click('.choice[data-lang="en"]');
+  await page.click('#btn-privacy');
   await expect(page.locator('#screen-privacy .prose')).toContainText('does not collect');
 });
 
@@ -342,8 +346,49 @@ test('reaching level 5 announces the Ocean paddle', async ({ page }) => {
   await expect(page.locator('#overlay-card')).toBeVisible({ timeout: 4000 });
   await expect(page.locator('#unlock-note')).toBeVisible();
   await expect(page.locator('#unlock-note')).toContainText('Umefungua: Bahari');
-  await expect(page.locator('#unlock-note')).toContainText('Unlocked: Ocean');
   const stats = await page.evaluate(() => window.__matofali.save.stats);
   expect(stats).toMatchObject({ games: 1, flawless: 1 });
   expect(stats.bricks).toBeGreaterThanOrEqual(1);
+});
+
+test('quitting after clearing a level lets you continue from that level', async ({ page }) => {
+  await openHome(page);
+  await expect(page.locator('#btn-continue')).toBeHidden();
+  await startPlaying(page);
+  await page.evaluate(() => {
+    const g = window.__matofali.game;
+    g.bricks = g.bricks.slice(0, 1);
+    const br = g.bricks[0];
+    br.hp = 1;
+    g.balls = [{ x: br.x + 18, y: br.y + br.h + 9, r: 7, vx: 0, vy: -5, stuck: false }];
+  });
+  await expect(page.locator('#card-level')).toHaveText('Ngazi 2', { timeout: 4000 });
+  const scoreAtLevel2 = await page.evaluate(() => window.__matofali.game.score);
+  await page.click('#btn-go');
+  await page.click('#btn-pause');
+  await page.click('#btn-quit');
+  await expect(page.locator('#btn-continue')).toBeVisible();
+  await expect(page.locator('#btn-continue')).toContainText('Endelea ngazi 2');
+  await expect(page.locator('#btn-play')).toContainText('Mchezo mpya');
+  // Still there after closing the app.
+  await page.reload();
+  await expect(page.locator('#btn-continue')).toBeVisible({ timeout: 5000 });
+  await page.click('#btn-continue');
+  await expect(page.locator('#card-level')).toHaveText('Ngazi 2');
+  const g = await page.evaluate(() => ({ level: window.__matofali.game.level, score: window.__matofali.game.score, lives: window.__matofali.game.lives }));
+  expect(g).toEqual({ level: 2, score: scoreAtLevel2, lives: 3 });
+});
+
+test('game over clears the save point', async ({ page }) => {
+  await openHome(page);
+  await startPlaying(page);
+  await page.evaluate(() => {
+    const g = window.__matofali.game;
+    g.lives = 1;
+    g.balls = [{ x: 240, y: 700, r: 7, vx: 0, vy: 5, stuck: false }];
+  });
+  await expect(page.locator('#overlay-over')).toBeVisible();
+  await page.click('#btn-over-home');
+  await expect(page.locator('#btn-continue')).toBeHidden();
+  await expect(page.locator('#btn-play')).toContainText('Anza');
 });

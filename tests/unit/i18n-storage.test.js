@@ -3,7 +3,7 @@ import sw from '../../src/i18n/sw.js';
 import en from '../../src/i18n/en.js';
 import { translate, translatePlain, lookup, LANGUAGE_MODES } from '../../src/i18n/i18n.js';
 import { LEVELS, PATTERN_IDS } from '../../src/config/levels.js';
-import { SaveData, memoryBackend, localStorageBackend, parseSettings, parseStats, KEYS, DEFAULT_SETTINGS } from '../../src/storage/storage.js';
+import { SaveData, memoryBackend, localStorageBackend, parseSettings, parseStats, parseRun, KEYS, DEFAULT_SETTINGS } from '../../src/storage/storage.js';
 import { PADDLES, BALLS, unlockProgress, unlockedKeys } from '../../src/config/skins.js';
 import { fitField } from '../../src/ui/layout.js';
 import { readFileSync } from 'node:fs';
@@ -32,8 +32,8 @@ describe('translations', () => {
     for (const [k, v] of [...Object.entries(sw), ...Object.entries(en)]) expect(v.trim(), k).not.toBe('');
   });
 
-  it('defaults to Swahili first with English beneath', () => {
-    expect(translate('both', 'home.play')).toEqual({ primary: 'Anza', secondary: 'Play' });
+  it('defaults to Swahili', () => {
+    expect(DEFAULT_SETTINGS.language).toBe('sw');
   });
 
   it('switches to Swahili only and English only', () => {
@@ -41,12 +41,9 @@ describe('translations', () => {
     expect(translate('en', 'home.play')).toEqual({ primary: 'Play', secondary: null });
   });
 
-  it('shows one line when both languages read the same', () => {
-    expect(translate('both', 'level.kilimanjaro.name').secondary).toBeNull();
-  });
 
   it('fills in values', () => {
-    expect(translatePlain('both', 'card.level', { n: 5 })).toBe('Ngazi 5 · Level 5');
+    expect(translatePlain('sw', 'card.level', { n: 5 })).toBe('Ngazi 5');
     expect(translatePlain('en', 'card.cleared', { bonus: 250 })).toBe('Level cleared! +250');
   });
 
@@ -54,8 +51,9 @@ describe('translations', () => {
     expect(() => lookup('sw', 'nope.missing')).toThrow(/Missing translation/);
   });
 
-  it('offers the three documented language modes', () => {
-    expect(LANGUAGE_MODES).toEqual(['both', 'sw', 'en']);
+  it('offers Swahili and English only; a saved bilingual choice becomes Swahili', () => {
+    expect(LANGUAGE_MODES).toEqual(['sw', 'en']);
+    expect(parseSettings('{"language":"both"}').language).toBe('sw');
   });
 });
 
@@ -64,7 +62,7 @@ describe('saved data', () => {
     const s = await new SaveData(memoryBackend()).load();
     expect(s.best).toBe(0);
     expect(s.highestLevel).toBe(1);
-    expect(s.settings).toEqual({ sound: true, vibration: true, language: 'both', paddle: 'classic', ball: 'classic' });
+    expect(s.settings).toEqual({ sound: true, vibration: true, language: 'sw', paddle: 'classic', ball: 'classic' });
     expect(s.stats).toEqual({ games: 0, bricks: 0, flawless: 0 });
   });
 
@@ -115,7 +113,7 @@ describe('saved data', () => {
   it('ignores invalid settings updates', async () => {
     const s = await new SaveData(memoryBackend()).load();
     await s.updateSettings({ language: 'klingon' });
-    expect(s.settings.language).toBe('both');
+    expect(s.settings.language).toBe('sw');
   });
 
   it('keeps playing when the storage itself fails', async () => {
@@ -198,5 +196,24 @@ describe('unlockable paddles and balls', () => {
     expect(b.progress).toMatchObject({ level: 1, score: 0, bricks: 42 });
     expect(parseStats('{"games":-3,"bricks":"x","flawless":2}')).toEqual({ games: 0, bricks: 0, flawless: 2 });
     expect(parseStats('not json')).toEqual({ games: 0, bricks: 0, flawless: 0 });
+  });
+});
+
+describe('save point', () => {
+  it('remembers the level to continue from across restarts, and can be cleared', async () => {
+    const backend = memoryBackend();
+    const a = await new SaveData(backend).load();
+    expect(a.run).toBeNull();
+    await a.saveRun({ level: 7, score: 4210, lives: 2 });
+    const b = await new SaveData(backend).load();
+    expect(b.run).toEqual({ level: 7, score: 4210, lives: 2 });
+    await b.clearRun();
+    expect((await new SaveData(backend).load()).run).toBeNull();
+  });
+
+  it('ignores a damaged save point', () => {
+    for (const raw of ['', 'nope', '{"level":0,"score":5,"lives":2}', '{"level":3,"score":-1,"lives":2}', '{"level":3,"score":5,"lives":0}']) {
+      expect(parseRun(raw), raw).toBeNull();
+    }
   });
 });
