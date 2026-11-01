@@ -6,8 +6,8 @@
 | Outfit font (body) | `@fontsource/outfit` 5.2.6, Outfit Project Authors via Google Fonts | SIL Open Font License 1.1 (`node_modules/@fontsource/outfit/LICENSE`) |
 | Bricks, paddle, ball, sky, Kilimanjaro silhouette | Drawn in code (`src/render/`) for this project | Project's own |
 | How-to-play illustrations | Inline SVG in `index.html`, made for this project | Project's own |
-| App icon, adaptive icon, splash | `scripts/make-brand-assets.mjs`, made for this project | Project's own |
-| Store screenshots and feature graphic | Captured from the game by `scripts/store-screenshots.cjs` | Project's own |
+| Logo, app icon, feature graphic (`assets/source/`) | Made by Robert Kamunde with ChatGPT image generation, 1 November 2026. `scripts/make-brand-assets.mjs` resizes them into the launcher icons, splash, in-app logo and store images. | Project's own (Robert's). Keep the ChatGPT conversation as a record of creation. |
+| Store screenshots | Captured from the game by `scripts/store-screenshots.cjs` | Project's own |
 | Sound effects | Synthesised at runtime (`src/audio/sfx.js`) | Project's own; no audio files |
 | Tanzanian flag colours | Public national symbol colours (#1EB53A, #FCD116, #000000, #00A3DD) | Not copyrightable; the flag itself is not reproduced as a logo |
 | Capacitor and plugins | Ionic | MIT |

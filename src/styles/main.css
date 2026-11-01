@@ -51,6 +51,10 @@ body {
 .logo { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; margin: 0; line-height: 1; }
 .logo span { color: var(--yellow); }
 .logo-xl { font-size: clamp(2.4rem, 13vw, 3.6rem); }
+/* Robert's logo artwork (2:1). Sized to the screen so the home screen still fits short phones. */
+.logo-img { display: block; height: auto; max-width: 100%; }
+.logo-splash { width: min(320px, 78vw); }
+.logo-home { width: min(320px, 75vw, 34vh); }
 .flagbar {
   height: 8px;
   border-radius: 4px;
