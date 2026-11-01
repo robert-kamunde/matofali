@@ -129,16 +129,14 @@ body {
   justify-content: center;
   touch-action: none;
   border-radius: 14px;
-  /* Flag colours fill spare space around the 3:4 field */
-  background:
-    linear-gradient(135deg, rgba(30,181,58,0.16) 0 30%, transparent 30% 70%, rgba(0,163,221,0.16) 70% 100%),
-    var(--night);
+  /* Plain night sky around the 3:4 field (DECISIONS D-24: flag colours are accents only) */
+  background: var(--night);
 }
 .frame {
   position: relative;
   padding: 4px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--green) 0 38%, var(--yellow) 38% 42%, var(--black) 42% 58%, var(--yellow) 58% 62%, var(--blue) 62% 100%);
+  background: var(--line);
 }
 #game-canvas { display: block; border-radius: 9px; touch-action: none; }
 .launch-hint, .toast {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Game, STATES, pickPowerUp } from '../../src/engine/game.js';
 import { RULES, ballSpeed } from '../../src/config/rules.js';
+import { LEVELS } from '../../src/config/levels.js';
 import { createRng, sequenceRng } from '../../src/engine/rng.js';
 import { angleFromVertical } from '../../src/engine/physics.js';
 import { playingGame, setBall, types, EMPTY_ROW, ONE_CORNER_BRICK } from './helpers.js';
@@ -271,7 +272,7 @@ describe('level completion and progression', () => {
     expect(types(events)).toContain('levelComplete');
   });
 
-  it('advances through the four levels and into round 2 with tougher bricks', () => {
+  it('advances through the four levels and into generated round-2 levels with tougher bricks', () => {
     const g = new Game({ rng: createRng(1) });
     g.newGame();
     const ids = [];
@@ -282,14 +283,15 @@ describe('level completion and progression', () => {
       g.completeLevel();
       g.advance();
     }
-    expect(ids).toEqual(['bendera', 'kilimanjaro', 'zanzibar', 'serengeti', 'bendera']);
+    expect(ids).toEqual(['bendera', 'kilimanjaro', 'zanzibar', 'serengeti', 'generated-5']);
     expect(g.level).toBe(6);
     expect(g.round).toBe(2);
-    const green = g.bricks.find((b) => b.letter === 'g');
-    const wood = new Game();
-    wood.level = 7;
+    const plain = g.bricks.find((b) => 'gybso'.includes(b.letter));
+    expect(plain.hp).toBe(2);
+    // Door wood stays at 3 hits in every round.
+    const wood = new Game({ levels: LEVELS, generate: null });
+    wood.level = 7; // Zanzibar door, round 2, when cycling the hand-made levels
     wood.loadLevel();
-    expect(green.hp).toBe(2);
     expect(wood.bricks.find((b) => b.letter === 'd').hp).toBe(3);
   });
 

@@ -50,5 +50,13 @@ All player-facing Swahili is in `src/i18n/sw.js`. Please check each line for nat
 | level.zanzibar.name | Mlango wa Zanzibar | Zanzibar door | |
 | level.zanzibar.subtitle | Mlango wa nakshi | Carved door | |
 | level.serengeti.subtitle | Tambarare zisizo na mwisho | Endless plains | |
+| level.pattern.stripes | Mistari | Stripes | |
+| level.pattern.diamond | Almasi | Diamond | |
+| level.pattern.pyramid | Piramidi | Pyramid | |
+| level.pattern.fortress | Ngome | Fortress | |
+| level.pattern.waves | Mawimbi | Waves | |
+| level.pattern.checker | Dama | Checkers (the board game) | |
+| level.pattern.scatter | Nyota | Stars | |
+| level.generated.subtitle | Changamoto mpya | A new challenge | |
 | Store short description | Vunja matofali! Mchezo wa Kitanzania wenye Kilimanjaro, Zanzibar na zaidi. | Break the bricks! A Tanzanian game with Kilimanjaro, Zanzibar and more. | |
 | Store full description | see `store/listing-sw.md` | | |

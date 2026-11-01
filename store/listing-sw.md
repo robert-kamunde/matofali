@@ -16,7 +16,7 @@ Kila ngazi ni picha iliyojengwa kwa matofali:
 • Mlango wa Zanzibar – mlango wa nakshi wa Zanzibar
 • Serengeti – tambarare zisizo na mwisho chini ya jua la njano
 
-Ukimaliza zote nne, zinarudi zikiwa na kasi zaidi na ngumu zaidi, kwa hiyo daima kuna alama mpya ya kufikia.
+Baada ya hizo nne, ngazi haziishi: kila ngazi mpya ni mpangilio mpya, wenye kasi zaidi na mgumu zaidi, kwa hiyo daima kuna alama mpya ya kufikia.
 
 Daka zawadi zinazoanguka:
 ↔ Ubao mpana kwa sekunde 12

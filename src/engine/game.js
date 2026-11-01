@@ -2,7 +2,7 @@
 // so every rule can be tested in Node. The UI reads public fields and listens to events.
 
 import { RULES, roundForLevel, ballSpeed, brickHits, brickHitPoints } from '../config/rules.js';
-import { LEVELS, levelDefinition } from '../config/levels.js';
+import { LEVELS, levelDefinition, generateLevel } from '../config/levels.js';
 import { createRng } from './rng.js';
 import { clamp, velocityFromVertical, limitAngle, rotate, circleRectHit } from './physics.js';
 
@@ -25,9 +25,11 @@ const ALLOWED = Object.freeze({
 });
 
 export class Game {
-  constructor({ rules = RULES, levels = LEVELS, rng = createRng(), onEvent = () => {} } = {}) {
+  constructor({ rules = RULES, levels = LEVELS, generate, rng = createRng(), onEvent = () => {} } = {}) {
     this.rules = rules;
     this.levels = levels;
+    // Endless generated levels follow the built-in ones; custom test boards just cycle.
+    this.generate = generate !== undefined ? generate : levels === LEVELS ? generateLevel : null;
     this.rng = rng;
     this.onEvent = onEvent;
     this.state = STATES.IDLE;
@@ -46,7 +48,7 @@ export class Game {
   }
 
   get levelDef() {
-    return levelDefinition(this.level, this.levels);
+    return levelDefinition(this.level, this.levels, this.generate);
   }
 
   emit(type, data = {}) {

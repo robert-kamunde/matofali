@@ -5,7 +5,7 @@
 | Command | What it runs |
 | --- | --- |
 | `npm run lint` | ESLint over source, tests and scripts |
-| `npm test` | 77 Vitest unit tests in Node (engine, rules, levels, translations, storage, layout) |
+| `npm test` | 82 Vitest unit tests in Node (engine, rules, levels, translations, storage, layout) |
 | `npm run build` | Production web build into `dist/` |
 | `npm run test:e2e` | 40 Playwright tests of the built app, in a Pixel 5 profile and a 360 × 640 budget-phone profile, both with touch |
 | `npm run check` | All four in order |
@@ -14,7 +14,7 @@ The GitHub workflow runs the same commands, then builds the Android APK and AAB.
 
 ### What the unit tests cover
 
-Paddle movement and limits; launch angles and the shallow-angle guard; wall bounces; paddle bounce angles (centre, ends, halfway); brick strengths in rounds 1 and 2; scoring of every hit; corner hits, side hits and seam hits on two bricks; no tunnelling at maximum speed; level completion bonus; progression through all four levels into round 2; life loss, game over and restart; multi-ball (angles, speed, losing one ball, losing all); extra-life cap; wide-paddle duration to the exact step; power-up drop rate and shares over 200,000 seeded draws; a 20-minute autopilot run checking the ball never leaves the field or stalls; translations complete in both languages; saved data persistence, recovery from corrupt values and storage failure; field scaling.
+Paddle movement and limits; launch angles and the shallow-angle guard; wall bounces; paddle bounce angles (centre, ends, halfway); brick strengths in rounds 1 and 2; scoring of every hit; corner hits, side hits and seam hits on two bricks; no tunnelling at maximum speed; level completion bonus; progression through all four levels into generated round-2 levels; generated levels 5–1000 valid, mirrored, repeatable and getting harder; life loss, game over and restart; multi-ball (angles, speed, losing one ball, losing all); extra-life cap; wide-paddle duration to the exact step; power-up drop rate and shares over 200,000 seeded draws; a 20-minute autopilot run checking the ball never leaves the field or stalls; translations complete in both languages; saved data persistence, recovery from corrupt values and storage failure; field scaling.
 
 ### What the browser tests cover
 

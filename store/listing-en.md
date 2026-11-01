@@ -14,7 +14,7 @@ Every level is a picture made of bricks:
 • Mlango wa Zanzibar – a carved Zanzibar door
 • Serengeti – the endless plains under a yellow sun
 
-Clear all four and they come back faster and tougher, so there is always a higher score to chase.
+After those four the levels never end: every new level is a fresh layout, faster and tougher, so there is always a higher score to chase.
 
 Catch falling power-ups:
 ↔ Wide paddle for 12 seconds

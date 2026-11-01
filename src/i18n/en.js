@@ -61,4 +61,12 @@ export default {
   'level.zanzibar.subtitle': 'Zanzibar door',
   'level.serengeti.name': 'Serengeti',
   'level.serengeti.subtitle': 'Endless plains',
+  'level.pattern.stripes': 'Stripes',
+  'level.pattern.diamond': 'Diamond',
+  'level.pattern.pyramid': 'Pyramid',
+  'level.pattern.fortress': 'Fortress',
+  'level.pattern.waves': 'Waves',
+  'level.pattern.checker': 'Checkers',
+  'level.pattern.scatter': 'Stars',
+  'level.generated.subtitle': 'A new challenge',
 };

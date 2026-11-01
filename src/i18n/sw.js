@@ -63,4 +63,12 @@ export default {
   'level.zanzibar.subtitle': 'Mlango wa nakshi',
   'level.serengeti.name': 'Serengeti',
   'level.serengeti.subtitle': 'Tambarare zisizo na mwisho',
+  'level.pattern.stripes': 'Mistari',
+  'level.pattern.diamond': 'Almasi',
+  'level.pattern.pyramid': 'Piramidi',
+  'level.pattern.fortress': 'Ngome',
+  'level.pattern.waves': 'Mawimbi',
+  'level.pattern.checker': 'Dama',
+  'level.pattern.scatter': 'Nyota',
+  'level.generated.subtitle': 'Changamoto mpya',
 };

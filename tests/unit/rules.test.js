@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { RULES, roundForLevel, ballSpeed, brickHits, brickHitPoints } from '../../src/config/rules.js';
-import { LEVELS, validateLevel, levelDefinition } from '../../src/config/levels.js';
+import { LEVELS, validateLevel, levelDefinition, generateLevel, generatedDifficulty, PATTERN_IDS } from '../../src/config/levels.js';
 
 describe('difficulty progression', () => {
   it('groups four levels into each round', () => {
@@ -64,10 +64,10 @@ describe('levels', () => {
     expect(has('serengeti', 'o')).toBe(true);
   });
 
-  it('cycles back to level 1 after level 4', () => {
-    expect(levelDefinition(5).id).toBe('bendera');
-    expect(levelDefinition(8).id).toBe('serengeti');
-    expect(levelDefinition(10).id).toBe('kilimanjaro');
+  it('cycles through the given levels when generation is turned off', () => {
+    expect(levelDefinition(5, LEVELS, null).id).toBe('bendera');
+    expect(levelDefinition(8, LEVELS, null).id).toBe('serengeti');
+    expect(levelDefinition(10, LEVELS, null).id).toBe('kilimanjaro');
   });
 
   it('reports a malformed level clearly', () => {
@@ -75,5 +75,51 @@ describe('levels', () => {
     expect(() => validateLevel(bad, RULES)).toThrow(/3 cells, expected 12/);
     const unknown = { ...bad, rows: ['gggggggggggz'] };
     expect(() => validateLevel(unknown, RULES)).toThrow(/unknown brick "z"/);
+  });
+});
+
+describe('endless generated levels', () => {
+  it('keeps the four hand-made levels first, then generates from level 5', () => {
+    expect([1, 2, 3, 4].map((l) => levelDefinition(l).id)).toEqual(['bendera', 'kilimanjaro', 'zanzibar', 'serengeti']);
+    expect(levelDefinition(5).id).toBe('generated-5');
+    expect(levelDefinition(5).generated).toBe(true);
+  });
+
+  it('every generated level from 5 to 1000 is valid, mirrored and has enough bricks', () => {
+    const patterns = new Set();
+    for (let l = 5; l <= 1000; l++) {
+      const def = generateLevel(l);
+      expect(validateLevel(def, RULES)).toBe(true);
+      for (const row of def.rows) expect(row).toBe([...row].reverse().join(''));
+      const bricks = def.rows.join('').replace(/\./g, '');
+      expect(bricks.length, `level ${l}`).toBeGreaterThanOrEqual(24);
+      expect(bricks.replace(/d/g, '').length, `level ${l} breakable`).toBeGreaterThan(0);
+      patterns.add(def.nameKey);
+    }
+    expect(patterns.size).toBe(PATTERN_IDS.length);
+  });
+
+  it('the same level number always gives the same layout', () => {
+    const a = generateLevel(42).rows.join('/');
+    expect(levelDefinition(42).rows.join('/')).toBe(a);
+    expect(generateLevel(43).rows.join('/')).not.toBe(a);
+  });
+
+  it('gets harder slowly and then levels off', () => {
+    const d = (l) => generatedDifficulty(l);
+    expect(d(5)).toEqual({ rows: 6, toughShare: 0.1, woodShare: 0 });
+    for (let l = 5; l < 200; l++) {
+      expect(d(l + 1).rows).toBeGreaterThanOrEqual(d(l).rows);
+      expect(d(l + 1).toughShare).toBeGreaterThanOrEqual(d(l).toughShare);
+      expect(d(l + 1).woodShare).toBeGreaterThanOrEqual(d(l).woodShare);
+    }
+    expect(d(200)).toEqual({ rows: 10, toughShare: 0.45, woodShare: 0.2 });
+    // Over many levels, later ones really do hold more tough bricks.
+    const toughCount = (from) => {
+      let n = 0;
+      for (let l = from; l < from + 10; l++) n += generateLevel(l).rows.join('').replace(/[^krd]/g, '').length;
+      return n;
+    };
+    expect(toughCount(100)).toBeGreaterThan(toughCount(5) * 2);
   });
 });

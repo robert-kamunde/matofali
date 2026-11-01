@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import sw from '../../src/i18n/sw.js';
 import en from '../../src/i18n/en.js';
 import { translate, translatePlain, lookup, LANGUAGE_MODES } from '../../src/i18n/i18n.js';
-import { LEVELS } from '../../src/config/levels.js';
+import { LEVELS, PATTERN_IDS } from '../../src/config/levels.js';
 import { SaveData, memoryBackend, localStorageBackend, parseSettings, KEYS, DEFAULT_SETTINGS } from '../../src/storage/storage.js';
 import { fitField } from '../../src/ui/layout.js';
 import { readFileSync } from 'node:fs';
@@ -19,6 +19,8 @@ describe('translations', () => {
       ...[...html.matchAll(/data-i18n(?:-aria)?="([^"]+)"/g)].map((m) => m[1]),
       ...[...app.matchAll(/'((?:card|pause|over|settings|hud|home|howto|privacy|common)\.[a-zA-Z.]+)'/g)].map((m) => m[1]),
       ...LEVELS.flatMap((l) => [l.nameKey, l.subtitleKey]),
+      ...PATTERN_IDS.map((id) => `level.pattern.${id}`),
+      'level.generated.subtitle',
     ]);
     for (const k of keys) expect(sw[k], k).toBeTypeOf('string');
   });

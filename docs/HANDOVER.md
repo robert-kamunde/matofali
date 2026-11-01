@@ -7,7 +7,7 @@ Date: 27 October 2026
 | State | Status |
 | --- | --- |
 | Implemented | **Yes.** The full game, four levels, Swahili/English, sound, vibration, settings, saved best score, Android project, store art and listing text |
-| Automatically tested | **Yes.** 77 unit tests and 40 browser tests pass, lint is clean, and the web build works (`docs/QA_REPORT.md`) |
+| Automatically tested | **Yes.** 82 unit tests and 40 browser tests pass, lint is clean, and the web build works (`docs/QA_REPORT.md`) |
 | Device tested | **No.** No Android phone or emulator was available |
 | Release candidate generated | **No.** The APK/AAB has not been built, because the development machine cannot reach Google's Android servers |
 | Published | **No** |
