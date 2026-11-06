@@ -22,7 +22,7 @@ export default {
   'style.unlocked': 'Umefungua: {name}',
   'paddle.classic': 'Kawaida',
   'paddle.ocean': 'Bahari',
-  'paddle.bendera': 'Bendera',
+  'paddle.tanzanite': 'Tanzanite',
   'paddle.kanga': 'Kanga',
   'paddle.mninga': 'Mninga',
   'paddle.dhahabu': 'Dhahabu',
@@ -79,8 +79,8 @@ export default {
 
   'common.back': 'Rudi',
 
-  'level.bendera.name': 'Bendera',
-  'level.bendera.subtitle': 'Bendera ya Taifa',
+  'level.twiga.name': 'Twiga',
+  'level.twiga.subtitle': 'Mnyama wa Taifa',
   'level.kilimanjaro.name': 'Kilimanjaro',
   'level.kilimanjaro.subtitle': 'Paa la Afrika',
   'level.zanzibar.name': 'Mlango wa Zanzibar',

@@ -25,13 +25,12 @@ export const PADDLES = Object.freeze([
     stops: [[0, W], [0.12, W], [0.12, '#00A3DD'], [0.88, '#0077B6'], [0.88, W], [1, W]],
   },
   {
-    id: 'bendera',
-    nameKey: 'paddle.bendera',
+    // Violet-blue like the gemstone found only in Tanzania. Replaced the flag
+    // paddle (DECISIONS D-30).
+    id: 'tanzanite',
+    nameKey: 'paddle.tanzanite',
     unlock: { kind: 'level', n: 10 },
-    stops: [
-      [0, '#1EB53A'], [0.42, '#1EB53A'], [0.42, Y], [0.46, Y], [0.46, '#000'], [0.54, '#000'],
-      [0.54, Y], [0.58, Y], [0.58, '#00A3DD'], [1, '#00A3DD'],
-    ],
+    stops: [[0, '#2E1F6B'], [0.25, '#4B3AA8'], [0.5, '#8C7BEA'], [0.75, '#4B3AA8'], [1, '#2E1F6B']],
   },
   {
     id: 'kanga',

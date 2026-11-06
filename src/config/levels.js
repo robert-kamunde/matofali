@@ -11,21 +11,23 @@ import { createRng } from '../engine/rng.js';
 
 export const LEVELS = Object.freeze([
   {
-    id: 'bendera',
-    nameKey: 'level.bendera.name',
-    subtitleKey: 'level.bendera.subtitle',
-    // The flag's diagonal: green top-left, black band edged in yellow, blue bottom-right.
+    id: 'twiga',
+    nameKey: 'level.twiga.name',
+    subtitleKey: 'level.twiga.subtitle',
+    // A giraffe, the national animal: yellow with black patches, on green grass.
+    // (Replaced the flag picture: the National Emblems Act restricts any
+    // likeness of the flag, DECISIONS D-30.)
     rows: [
-      'gggggggggyky',
-      'ggggggggykyb',
-      'gggggggykybb',
-      'ggggggykybbb',
-      'gggggykybbbb',
-      'ggggykybbbbb',
-      'gggykybbbbbb',
-      'ggykybbbbbbb',
-      'gykybbbbbbbb',
-      'ykybbbbbbbbb',
+      '..kk........',
+      'yyyy........',
+      '..yy........',
+      '...ky.......',
+      '...yk.......',
+      '...ykyykyy..',
+      '...yykyyyky.',
+      '...ykyykyyy.',
+      '...y.y..y.y.',
+      'gggggggggggg',
     ],
   },
   {

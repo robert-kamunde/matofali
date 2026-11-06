@@ -8,10 +8,10 @@ Needs native-speaker review before publishing (docs/SWAHILI_REVIEW.md).
 
 **Maelezo kamili:**
 
-Matofali ni mchezo wa kuvunja matofali uliotengenezwa Tanzania. Buruta kidole kusogeza ubao wenye rangi za bendera, gusa skrini kurusha mpira, na vunja kila tofali ufike ngazi inayofuata.
+Matofali ni mchezo wa kuvunja matofali uliotengenezwa Tanzania. Buruta kidole kusogeza ubao, gusa skrini kurusha mpira, na vunja kila tofali ufike ngazi inayofuata.
 
 Kila ngazi ni picha iliyojengwa kwa matofali:
-• Bendera – Bendera ya Taifa
+• Twiga – Mnyama wa Taifa
 • Kilimanjaro – Paa la Afrika, na theluji yake
 • Mlango wa Zanzibar – mlango wa nakshi wa Zanzibar
 • Serengeti – tambarare zisizo na mwisho chini ya jua la njano

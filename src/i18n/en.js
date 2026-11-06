@@ -20,7 +20,7 @@ export default {
   'style.unlocked': 'Unlocked: {name}',
   'paddle.classic': 'Classic',
   'paddle.ocean': 'Ocean',
-  'paddle.bendera': 'Flag',
+  'paddle.tanzanite': 'Tanzanite',
   'paddle.kanga': 'Kanga',
   'paddle.mninga': 'Mahogany',
   'paddle.dhahabu': 'Gold',
@@ -77,8 +77,8 @@ export default {
 
   'common.back': 'Back',
 
-  'level.bendera.name': 'Bendera',
-  'level.bendera.subtitle': 'The flag',
+  'level.twiga.name': 'Twiga',
+  'level.twiga.subtitle': 'The national animal',
   'level.kilimanjaro.name': 'Kilimanjaro',
   'level.kilimanjaro.subtitle': 'Roof of Africa',
   'level.zanzibar.name': 'Mlango wa Zanzibar',

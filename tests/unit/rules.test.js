@@ -46,7 +46,7 @@ describe('difficulty progression', () => {
 
 describe('levels', () => {
   it('ships the four documented levels in order', () => {
-    expect(LEVELS.map((l) => l.id)).toEqual(['bendera', 'kilimanjaro', 'zanzibar', 'serengeti']);
+    expect(LEVELS.map((l) => l.id)).toEqual(['twiga', 'kilimanjaro', 'zanzibar', 'serengeti']);
   });
 
   it.each(LEVELS.map((l) => [l.id, l]))('%s is a valid 12-wide grid of known bricks', (_id, def) => {
@@ -55,7 +55,7 @@ describe('levels', () => {
 
   it('uses the multi-hit bricks each level is documented with', () => {
     const has = (id, c) => LEVELS.find((l) => l.id === id).rows.join('').includes(c);
-    expect(has('bendera', 'k')).toBe(true);
+    expect(has('twiga', 'k')).toBe(true);
     expect(has('kilimanjaro', 'r')).toBe(true);
     expect(has('kilimanjaro', 's')).toBe(true);
     expect(has('zanzibar', 'd')).toBe(true);
@@ -65,7 +65,7 @@ describe('levels', () => {
   });
 
   it('cycles through the given levels when generation is turned off', () => {
-    expect(levelDefinition(5, LEVELS, null).id).toBe('bendera');
+    expect(levelDefinition(5, LEVELS, null).id).toBe('twiga');
     expect(levelDefinition(8, LEVELS, null).id).toBe('serengeti');
     expect(levelDefinition(10, LEVELS, null).id).toBe('kilimanjaro');
   });
@@ -80,7 +80,7 @@ describe('levels', () => {
 
 describe('endless generated levels', () => {
   it('keeps the four hand-made levels first, then generates from level 5', () => {
-    expect([1, 2, 3, 4].map((l) => levelDefinition(l).id)).toEqual(['bendera', 'kilimanjaro', 'zanzibar', 'serengeti']);
+    expect([1, 2, 3, 4].map((l) => levelDefinition(l).id)).toEqual(['twiga', 'kilimanjaro', 'zanzibar', 'serengeti']);
     expect(levelDefinition(5).id).toBe('generated-5');
     expect(levelDefinition(5).generated).toBe(true);
   });

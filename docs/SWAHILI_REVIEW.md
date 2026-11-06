@@ -44,7 +44,7 @@ All player-facing Swahili is in `src/i18n/sw.js`. Please check each line for nat
 | howto.life | Maisha zaidi | Extra life | |
 | privacy.body | (paragraph, see `sw.js`) | Privacy statement | |
 | common.back | Rudi | Back | |
-| level.bendera.subtitle | Bendera ya Taifa | The national flag | |
+| level.twiga.subtitle | Mnyama wa Taifa | The national animal | |
 | level.kilimanjaro.subtitle | Paa la Afrika | Roof of Africa | |
 | level.zanzibar.name | Mlango wa Zanzibar | Zanzibar door | |
 | level.zanzibar.subtitle | Mlango wa nakshi | Carved door | |
@@ -67,7 +67,7 @@ All player-facing Swahili is in `src/i18n/sw.js`. Please check each line for nat
 | style.locked.flawless | Maliza ngazi {n} bila kupoteza maisha | Clear {n} levels without losing a life | |
 | style.locked.games | Cheza michezo {n} | Play {n} games | |
 | style.unlocked | Umefungua: {name} | Unlocked: {name} | |
-| paddle.* | Kawaida, Bahari, Bendera, Kanga, Mninga, Dhahabu | Classic, Ocean, Flag, Kanga, Mahogany, Gold | |
+| paddle.* | Kawaida, Bahari, Tanzanite, Kanga, Mninga, Dhahabu | Classic, Ocean, Tanzanite, Kanga, Mahogany, Gold | |
 | ball.* | Kawaida, Jua, Barafu, Moto, Usiku, Dhahabu | Classic, Sun, Ice, Ember, Night, Gold | |
 | privacy.body | (updated paragraph, see `sw.js`) | Now also lists unlock counts and chosen paddle and ball | |
 | home.continue | Endelea ngazi {n} | Continue level {n} | |

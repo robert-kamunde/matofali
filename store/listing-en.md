@@ -6,10 +6,10 @@
 
 **Full description:**
 
-Matofali is a brick-breaker game made in Tanzania. Drag your finger to move the flag-coloured paddle, tap to launch the ball, and break every brick to reach the next level.
+Matofali is a brick-breaker game made in Tanzania. Drag your finger to move the paddle, tap to launch the ball, and break every brick to reach the next level.
 
 Every level is a picture made of bricks:
-• Bendera – the national flag
+• Twiga – the giraffe, our national animal
 • Kilimanjaro – the Roof of Africa, with its snow cap
 • Mlango wa Zanzibar – a carved Zanzibar door
 • Serengeti – the endless plains under a yellow sun

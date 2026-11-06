@@ -11,7 +11,7 @@ const p=await ctx.newPage();
 await p.goto('http://localhost:4173/?e2e&seed=11');await p.waitForSelector('#screen-home:not([hidden])');await p.waitForTimeout(300);
 await p.screenshot({path:OUT+'screenshots/01-home.png'});
 await p.click('#btn-play');await p.click('#btn-go');
-const levels=[[1,'02-bendera'],[2,'03-kilimanjaro'],[3,'04-zanzibar'],[4,'05-serengeti']];
+const levels=[[1,'02-twiga'],[2,'03-kilimanjaro'],[3,'04-zanzibar'],[4,'05-serengeti']];
 for (const [lvl,name] of levels){
   await p.evaluate((lvl)=>{const g=window.__matofali.game;g.level=lvl;g.loadLevel();window.__matofali.updateHud();g.launch();
     // knock out a few bricks and add a power-up so the shot looks mid-game

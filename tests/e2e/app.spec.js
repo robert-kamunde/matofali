@@ -52,8 +52,8 @@ test('level card, tap to launch, live score', async ({ page }) => {
   await openHome(page);
   await page.click('#btn-play');
   await expect(page.locator('#card-level')).toHaveText('Ngazi 1');
-  await expect(page.locator('#card-name')).toContainText('Bendera');
-  await expect(page.locator('#card-subtitle')).toContainText('Bendera ya Taifa');
+  await expect(page.locator('#card-name')).toContainText('Twiga');
+  await expect(page.locator('#card-subtitle')).toContainText('Mnyama wa Taifa');
   await page.click('#btn-go');
   await expect(page.locator('#launch-hint')).toBeVisible();
   expect(await state(page)).toBe('playing');
@@ -320,16 +320,16 @@ test('an unlocked paddle and ball can be chosen and are remembered', async ({ pa
   await page.reload();
   await expect(page.locator('#screen-home')).toBeVisible({ timeout: 5000 });
   await page.click('#btn-style');
-  await page.click('#skins-paddle .skin[data-id="bendera"]');
+  await page.click('#skins-paddle .skin[data-id="tanzanite"]');
   await page.click('#skins-ball .skin[data-id="jua"]');
-  await expect(page.locator('#skins-paddle .skin[data-id="bendera"]')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.locator('#skins-paddle .skin[data-id="tanzanite"]')).toHaveAttribute('aria-checked', 'true');
   await page.reload();
   await expect(page.locator('#screen-home')).toBeVisible({ timeout: 5000 });
   const skin = await page.evaluate(() => {
     const s = window.__matofali.renderer.skin;
     return [s.paddle.id, s.ball.id];
   });
-  expect(skin).toEqual(['bendera', 'jua']);
+  expect(skin).toEqual(['tanzanite', 'jua']);
 });
 
 test('reaching level 5 announces the Ocean paddle', async ({ page }) => {

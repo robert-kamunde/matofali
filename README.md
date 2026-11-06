@@ -1,6 +1,6 @@
 # Matofali: Brick Breaker
 
-The first Tanzanian-made brick game. An offline, free Android game with four levels drawn in bricks (Bendera, Kilimanjaro, Mlango wa Zanzibar and Serengeti), in Swahili and English. It has no ads, accounts, analytics or networking.
+The first Tanzanian-made brick game. An offline, free Android game with four hand-made levels drawn in bricks (Twiga, Kilimanjaro, Mlango wa Zanzibar and Serengeti), in Swahili and English. It has no ads, accounts, analytics or networking.
 
 Built with Vite, plain JavaScript and Canvas 2D, and packaged for Android with Capacitor 8.
 

@@ -283,7 +283,7 @@ describe('level completion and progression', () => {
       g.completeLevel();
       g.advance();
     }
-    expect(ids).toEqual(['bendera', 'kilimanjaro', 'zanzibar', 'serengeti', 'generated-5']);
+    expect(ids).toEqual(['twiga', 'kilimanjaro', 'zanzibar', 'serengeti', 'generated-5']);
     expect(g.level).toBe(6);
     expect(g.round).toBe(2);
     const plain = g.bricks.find((b) => 'gybso'.includes(b.letter));

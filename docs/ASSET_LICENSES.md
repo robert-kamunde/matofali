@@ -9,7 +9,7 @@
 | Logo, app icon, feature graphic (`assets/source/`) | Made by Robert Kamunde with ChatGPT image generation, 1 November 2026. `scripts/make-brand-assets.mjs` resizes them into the launcher icons, splash, in-app logo and store images. | Project's own (Robert's). Keep the ChatGPT conversation as a record of creation. |
 | Store screenshots | Captured from the game by `scripts/store-screenshots.cjs` | Project's own |
 | Sound effects | Synthesised at runtime (`src/audio/sfx.js`) | Project's own; no audio files |
-| Tanzanian flag colours | Public national symbol colours (#1EB53A, #FCD116, #000000, #00A3DD) | Not copyrightable; the flag itself is not reproduced as a logo |
+| Tanzanian flag colours | Public national symbol colours (#1EB53A, #FCD116, #000000, #00A3DD) | Not copyrightable; used only as accent colours; no likeness of the flag appears anywhere (National Emblems Act Cap. 10, DECISIONS D-30) |
 | Capacitor and plugins | Ionic | MIT |
 
 No third-party artwork, photos, music or brand assets are used. If background music by a Tanzanian artist is added later, keep a signed permission or licence in this folder.

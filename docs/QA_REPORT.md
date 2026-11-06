@@ -111,7 +111,7 @@ No open failing tests. Known limitations are listed in `docs/ROADMAP.md` (L-1 to
 | unit/rules.test.js | difficulty progression › rejects unknown bricks | PASS |
 | unit/rules.test.js | difficulty progression › power-up shares add up to 1 | PASS |
 | unit/rules.test.js | levels › ships the four documented levels in order | PASS |
-| unit/rules.test.js | levels › bendera is a valid 12-wide grid of known bricks | PASS |
+| unit/rules.test.js | levels › twiga is a valid 12-wide grid of known bricks | PASS |
 | unit/rules.test.js | levels › kilimanjaro is a valid 12-wide grid of known bricks | PASS |
 | unit/rules.test.js | levels › zanzibar is a valid 12-wide grid of known bricks | PASS |
 | unit/rules.test.js | levels › serengeti is a valid 12-wide grid of known bricks | PASS |
